@@ -1,32 +1,30 @@
 const express = require("express");
-const multer = require("multer");
+const jwt = require("jsonwebtoken");
 const recipeModel = require("../models/recipeModel");
 
 const router = express.Router();
-const upload = multer({ dest: "uploads/" });
+const JWT_SECRET = "mySecretKey";
 
-// Ruta para crear una receta
-router.post("/", upload.single("image"), (req, res) => {
+// Middleware para proteger rutas
+const authMiddleware = (req, res, next) => {
+  const token = req.header("Authorization");
+  if (!token) return res.status(401).json({ error: "Acceso denegado. No se envió un token." });
+
+  try {
+    req.user = jwt.verify(token, JWT_SECRET); // Decodifica y verifica el token
+    next();
+  } catch {
+    res.status(400).json({ error: "Token inválido." });
+  }
+};
+
+// Ruta protegida para crear una receta
+router.post("/", authMiddleware, (req, res) => {
   const { title, description, userId } = req.body;
-  const imagePath = req.file ? req.file.path : null;
 
-  recipeModel.createRecipe(title, description, imagePath, userId, (err) => {
-    if (err) {
-      res.status(500).json({ error: "Error al crear la receta." });
-    } else {
-      res.status(201).json({ message: "Receta creada exitosamente." });
-    }
-  });
-});
-
-// Ruta para obtener todas las recetas
-router.get("/", (req, res) => {
-  recipeModel.getAllRecipes((err, recipes) => {
-    if (err) {
-      res.status(500).json({ error: "Error al obtener recetas." });
-    } else {
-      res.status(200).json(recipes);
-    }
+  recipeModel.createRecipe(title, description, null, userId, (err) => {
+    if (err) return res.status(500).json({ error: "Error al crear la receta." });
+    res.status(201).json({ message: "Receta creada exitosamente." });
   });
 });
 
