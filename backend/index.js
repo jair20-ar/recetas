@@ -12,9 +12,19 @@ app.use(bodyParser.json());
 // Rutas
 app.use("/api/users", userRoutes); // Agregar las rutas de usuario
 
-// Ruta de prueba
+// Ruta para la página de inicio de sesión
 app.get("/", (req, res) => {
-  res.send("¡El servidor está funcionando correctamente!");
+  res.send(`
+    <h1>Inicio de Sesión</h1>
+    <form action="/api/users/login" method="POST">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required><br>
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required><br>
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+    <p>¿No tienes una cuenta? <a href="/api/users/register">Regístrate aquí</a></p>
+  `);
 });
 
 // Puerto
