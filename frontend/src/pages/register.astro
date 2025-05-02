@@ -1,0 +1,56 @@
+---
+---
+
+<html>
+  <head>
+    <title>Registro</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      form {
+        display: inline-block;
+        margin-top: 50px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        width: 80%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+    <!-- Importar el archivo JavaScript -->
+    <script type="module" src="/src/scripts/register.js"></script>
+  </head>
+  <body>
+    <h1>Registro</h1>
+    <form id="register-form">
+      <input type="text" id="name" placeholder="Su nombre completo" required />
+      <input type="email" id="email" placeholder="correo electronico" required />
+      <input type="password" id="password" placeholder="contraseñas" required />
+      <button type="submit">Registrarse</button>
+    </form>
+  </body>
+</html>

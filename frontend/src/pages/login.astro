@@ -1,0 +1,54 @@
+---
+---
+
+<html>
+  <head>
+    <title>Inicio de seccion</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      form {
+        display: inline-block;
+        margin-top: 50px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        width: 80%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+    <script type="module" src="/src/scripts/login.js"></script>
+  </head>
+  <body>
+    <h1>Iniciar Sesión</h1>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="correo electronico" required />
+      <input type="password" id="password" placeholder="contreseña" required />
+      <button type="submit">inicio de seccion </button>
+    </form>
+  </body>
+</html>
