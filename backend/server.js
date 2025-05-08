@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -12,16 +13,22 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Rutas
-app.use("/api/users", userRoutes); // Rutas para usuarios
-app.use("/api/recipes", recipeRoutes); // Rutas para recetas
+app.use("/api/users", userRoutes); // Rutas relacionadas con usuarios
+app.use("/api/recipes", recipeRoutes); // Rutas relacionadas con recetas
 
-// Ruta raíz
+// Ruta raíz para verificar que la API funciona
 app.get("/", (req, res) => {
-  res.json({ message: "Bienvenido a la API" });
+  res.json({
+    message: "Bienvenido a la API",
+    routes: {
+      users: ["/api/users/login", "/api/users/register"],
+      recipes: ["/api/recipes"],
+    },
+  });
 });
 
 // Puerto
-const PORT = process.env.PORT || 3000;
+const PORT = 4322;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

@@ -1,32 +1,60 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-// Componente de protección de rutas privadas
-const PrivateRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem("token"); // Verifica si el token existe
-  return isAuthenticated ? children : <Navigate to="/login" />;
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:4321/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token); // Guarda el token en localStorage
+        navigate("/dashboard"); // Redirige al dashboard
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Error al iniciar sesión");
+      }
+    } catch (error) {
+      setError("No se pudo conectar al servidor");
+    }
+  };
+
+  return (
+    <div>
+      <h1>Iniciar Sesión</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Correo electrónico"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+    </div>
+  );
 };
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* Ruta pública para el inicio de sesión */}
-        <Route path="/login" element={<Login />} />
-
-        {/* Ruta privada para el dashboard */}
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
+export default Login;

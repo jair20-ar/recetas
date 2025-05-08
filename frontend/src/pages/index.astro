@@ -1,46 +1,130 @@
- ---
- ---
+---
+---
 
-<html>
+<html lang="es">
   <head>
-    <title>Mi Pagina de Recetas </title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Página de Recetas</title>
     <style>
+      :root {
+        --bg-color: linear-gradient(135deg, #1a1a40, #0c0c1c);
+        --text-color: #ffffff;
+        --primary-color: #6c63ff;
+        --primary-color-hover: #836fff;
+        --button-bg: rgba(255, 255, 255, 0.1);
+        --button-border: rgba(255, 255, 255, 0.3);
+        --button-hover-bg: rgba(255, 255, 255, 0.2);
+        --star-color: rgba(255, 255, 255, 0.8);
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        text-align: center;
         margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
+        font-family: 'Arial', sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        text-align: center;
       }
+
       h1 {
-        margin-top: 50px;
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 20px var(--primary-color);
       }
+
+      p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
       .options {
-        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
       }
+
       .button {
         display: inline-block;
-        margin: 10px;
         padding: 15px 30px;
-        font-size: 16px;
-        color: #ffffff;
-        background-color: #2100b3;
-        border: none;
+        font-size: 1rem;
+        color: var(--text-color);
+        background: var(--button-bg);
+        border: 1px solid var(--button-border);
         border-radius: 5px;
         text-decoration: none;
         cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        backdrop-filter: blur(5px);
       }
+
       .button:hover {
-        background-color: #2100b3;
+        background: var(--button-hover-bg);
+        transform: translateY(-3px);
+      }
+
+      .stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      .stars span {
+        position: absolute;
+        display: block;
+        width: 2px;
+        height: 2px;
+        background: var(--star-color);
+        animation: twinkle 2s infinite ease-in-out;
+      }
+
+      @keyframes twinkle {
+        0%, 100% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.2;
+        }
       }
     </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Seleccionamos el contenedor para las estrellas
+        const starsContainer = document.querySelector('.stars');
+        if (!starsContainer) {
+          console.error("El contenedor `.stars` no existe.");
+          return; // Salimos si no existe
+        }
+
+        // Generamos las estrellas
+        for (let i = 0; i < 100; i++) {
+          const star = document.createElement('span');
+          star.style.top = `${Math.random() * 100}%`;
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.animationDelay = `${Math.random() * 2}s`;
+          starsContainer.appendChild(star);
+        }
+      });
+    </script>
   </head>
   <body>
-    <h1>Bienvenido a mi aplicacion</h1>
-    <p>por favor puedes seleccionar una opcion para continuar</p>
+    <div class="stars"></div>
+    <h1>Bienvenido a mi aplicación</h1>
+    <p>Por favor selecciona una opción para continuar</p>
     <div class="options">
-      <a href="/login" class="button">iniciar seccion</a>
-      <a href="/register" class="button">registrarse</a>
+      <a href="/login" class="button">Iniciar sesión</a>
+      <a href="/register" class="button">Registrarse</a>
     </div>
   </body>
 </html>

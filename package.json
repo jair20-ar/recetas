@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1"
@@ -19,5 +20,8 @@
     "postcss": "^8.4.31",
     "eslint": "^8.57.0",
     "svgo": "^2.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

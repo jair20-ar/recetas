@@ -1,54 +1,148 @@
 ---
 ---
 
-<html>
+<html lang="es">
   <head>
-    <title>Inicio de seccion</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión</title>
     <style>
+      :root {
+        --bg-color: linear-gradient(135deg, #1a1a40, #0c0c1c);
+        --text-color: #ffffff;
+        --form-bg: rgba(255, 255, 255, 0.1);
+        --form-border: rgba(255, 255, 255, 0.2);
+        --form-shadow: rgba(0, 0, 0, 0.3);
+        --input-bg: rgba(255, 255, 255, 0.2);
+        --input-border: rgba(255, 255, 255, 0.3);
+        --input-focus-border: #6c63ff;
+        --button-bg: #6c63ff;
+        --button-hover-bg: #836fff;
+        --star-color: rgba(255, 255, 255, 0.8);
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        text-align: center;
         margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
+        font-family: 'Arial', sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        text-align: center;
       }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 20px var(--button-bg);
+      }
+
       form {
-        display: inline-block;
-        margin-top: 50px;
-        padding: 20px;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background: var(--form-bg);
+        border: 1px solid var(--form-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px var(--form-shadow);
+        padding: 2rem;
+        width: 90%;
+        max-width: 400px;
+        backdrop-filter: blur(10px);
+        text-align: center;
       }
+
       input {
-        display: block;
-        margin: 10px auto;
-        padding: 10px;
-        width: 80%;
-        border: 1px solid #ccc;
+        width: 100%;
+        margin: 0.5rem 0;
+        padding: 0.8rem;
+        border: 1px solid var(--input-border);
         border-radius: 5px;
+        background: var(--input-bg);
+        color: var(--text-color);
+        font-size: 1rem;
+        transition: border 0.3s;
       }
+
+      input:focus {
+        outline: none;
+        border-color: var(--input-focus-border);
+        box-shadow: 0 0 10px var(--input-focus-border);
+      }
+
       button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
+        margin-top: 1rem;
+        padding: 0.8rem 2rem;
+        background: var(--button-bg);
+        color: var(--text-color);
         border: none;
         border-radius: 5px;
+        font-size: 1rem;
         cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        width: 100%;
       }
+
       button:hover {
-        background-color: #0056b3;
+        background: var(--button-hover-bg);
+        transform: translateY(-2px);
+      }
+
+      .stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      .stars span {
+        position: absolute;
+        display: block;
+        width: 2px;
+        height: 2px;
+        background: var(--star-color);
+        animation: twinkle 2s infinite ease-in-out;
+      }
+
+      @keyframes twinkle {
+        0%, 100% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.2;
+        }
       }
     </style>
-    <script type="module" src="/src/scripts/login.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Seleccionamos el contenedor para las estrellas
+        const starsContainer = document.querySelector('.stars');
+        if (!starsContainer) {
+          console.error("El contenedor `.stars` no existe.");
+          return; // Salimos si no existe
+        }
+
+        // Generamos las estrellas
+        for (let i = 0; i < 100; i++) {
+          const star = document.createElement('span');
+          star.style.top = `${Math.random() * 100}%`;
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.animationDelay = `${Math.random() * 2}s`;
+          starsContainer.appendChild(star);
+        }
+      });
+    </script>
   </head>
   <body>
-    <h1>Iniciar Sesión</h1>
+    <div class="stars"></div>
     <form id="login-form">
-      <input type="email" id="email" placeholder="correo electronico" required />
-      <input type="password" id="password" placeholder="contreseña" required />
-      <button type="submit">inicio de seccion </button>
+      <h1>Iniciar Sesión</h1>
+      <input type="email" id="email" placeholder="Correo Electrónico" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+      <button type="submit">Iniciar Sesión</button>
     </form>
   </body>
 </html>
