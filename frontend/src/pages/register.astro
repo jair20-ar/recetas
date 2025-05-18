@@ -1,12 +1,10 @@
----
----
-
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro</title>
     <style>
+      /* Mantengo los estilos originales */
       :root {
         --bg-color: linear-gradient(135deg, #1a1a40, #0c0c1c);
         --text-color: #ffffff;
@@ -116,25 +114,6 @@
         }
       }
     </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Seleccionamos el contenedor para las estrellas
-        const starsContainer = document.querySelector('.stars');
-        if (!starsContainer) {
-          console.error("El contenedor `.stars` no existe.");
-          return; // Salimos si no existe
-        }
-
-        // Generamos las estrellas
-        for (let i = 0; i < 100; i++) {
-          const star = document.createElement('span');
-          star.style.top = `${Math.random() * 100}%`;
-          star.style.left = `${Math.random() * 100}%`;
-          star.style.animationDelay = `${Math.random() * 2}s`;
-          starsContainer.appendChild(star);
-        }
-      });
-    </script>
   </head>
   <body>
     <div class="stars"></div>
@@ -145,5 +124,40 @@
       <input type="password" id="password" placeholder="Contraseña" required />
       <button type="submit">Registrarse</button>
     </form>
+    <div id="message"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('register-form');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          const name = document.getElementById('name').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const password = document.getElementById('password').value.trim();
+
+          try {
+            const response = await fetch('http://localhost:4322/api/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, email, password }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              messageDiv.textContent = data.message || "Registro exitoso.";
+              messageDiv.style.color = "green";
+            } else {
+              messageDiv.textContent = data.error || "Error al registrarse.";
+              messageDiv.style.color = "red";
+            }
+          } catch (error) {
+            messageDiv.textContent = "Error de conexión al servidor.";
+            messageDiv.style.color = "red";
+          }
+        });
+      });
+    </script>
   </body>
 </html>

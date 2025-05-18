@@ -2,18 +2,67 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const userRoutes = require("./routes/userRoutes");
-const recipeRoutes = require("./routes/recipeRoutes");
+const Database = require("better-sqlite3"); // Paquete para manejar SQLite
 
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(bodyParser.json());
+// Configuración de SQLite
+const db = new Database("./database.sqlite", { verbose: console.log });
 
-// Rutas
-app.use("/api/users", userRoutes); // Rutas para usuarios
-app.use("/api/recipes", recipeRoutes); // Rutas para recetas
+// Crear tabla de usuarios si no existe
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
+  )
+`).run();
+
+// Configuración de CORS
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:4322", // Permite solicitudes solo desde el frontend
+  methods: ["GET", "POST", "PUT", "DELETE"], // Métodos HTTP permitidos
+  allowedHeaders: ["Content-Type", "Authorization"], // Cabeceras permitidas
+};
+
+// Middlewares
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+  console.log(`Solicitud desde el origen: ${req.headers.origin}`);
+  next();
+});
+
+// Ruta para registrar usuarios
+app.post("/api/register", (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Validación de campos
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios." });
+  }
+
+  try {
+    // Insertar usuario en la base de datos
+    const stmt = db.prepare(`
+      INSERT INTO users (name, email, password)
+      VALUES (?, ?, ?)
+    `);
+    stmt.run(name, email, password);
+
+    console.log("Usuario registrado:", { name, email });
+    res.status(201).json({ message: "Usuario registrado exitosamente." });
+  } catch (err) {
+    console.error("Error al registrar el usuario:", err);
+    if (err.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      // Error de duplicación (email único)
+      res.status(400).json({ error: "El correo electrónico ya está registrado." });
+    } else {
+      res.status(500).json({ error: "Error al registrar el usuario." });
+    }
+  }
+});
 
 // Ruta raíz
 app.get("/", (req, res) => {
@@ -21,7 +70,7 @@ app.get("/", (req, res) => {
 });
 
 // Puerto
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4322;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
