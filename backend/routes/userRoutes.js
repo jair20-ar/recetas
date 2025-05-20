@@ -71,7 +71,8 @@ router.post("/login", async (req, res) => {
     userModel.getUserByEmail(email, async (err, user) => {
       if (err || !user) {
         console.error("Error al buscar el usuario:", err);
-        return res.status(404).json({ error: "Usuario no encontrado." });
+        // Actualización: Mensaje personalizado si el usuario no está registrado
+        return res.status(404).json({ error: "No estás registrado dentro de la app. Por favor, regístrate." });
       }
 
       // Verificar la contraseña

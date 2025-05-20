@@ -1,0 +1,76 @@
+---
+--- 
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página Principal</title>
+    <style>
+      :root {
+        --bg-color: linear-gradient(135deg, #1a1a40, #0c0c1c);
+        --text-color: #ffffff;
+        --nav-bg: rgba(255, 255, 255, 0.1);
+        --nav-border: rgba(255, 255, 255, 0.2);
+        --nav-hover: #6c63ff;
+        --button-hover-bg: #836fff;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+      }
+
+      nav {
+        background: var(--nav-bg);
+        width: 100%;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        border-bottom: 1px solid var(--nav-border);
+        backdrop-filter: blur(10px);
+      }
+
+      nav a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: color 0.3s;
+      }
+
+      nav a:hover {
+        color: var(--nav-hover);
+      }
+
+      h1 {
+        margin-top: 2rem;
+        font-size: 2.5rem;
+        text-shadow: 0 0 20px var(--nav-hover);
+      }
+
+      section {
+        margin: 2rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/register-recipe">Registrar Nueva Receta</a>
+      <a href="/recipes/vegetarianas">Vegetarianas</a>
+      <a href="/recipes/carnivoras">Carnívoras</a>
+      <a href="/recipes/veganas">Veganas</a>
+      <a href="/recipes/favoritas">Favoritas</a>
+    </nav>
+    <h1>Bienvenido a la Página Principal</h1>
+    <section>
+      <p>Selecciona una opción del menú para comenzar.</p>
+    </section>
+  </body>
+</html>

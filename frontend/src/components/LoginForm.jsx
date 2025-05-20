@@ -3,6 +3,7 @@ import React, { useState } from "react";
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -53,7 +54,7 @@ function LoginForm() {
         />
       </label>
       <br />
-      <button type="submit">iniciar seccion</button>
+      <button type="submit">Iniciar Sesión</button>
     </form>
   );
 }

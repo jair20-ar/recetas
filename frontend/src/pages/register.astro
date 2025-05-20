@@ -148,6 +148,11 @@
             if (response.ok) {
               messageDiv.textContent = data.message || "Registro exitoso.";
               messageDiv.style.color = "green";
+
+              // Redirige al usuario a la página de inicio de sesión después de 2 segundos
+              setTimeout(() => {
+                window.location.href = '/login'; // Cambia '/login' a la ruta de tu página de inicio de sesión
+              }, 2000);
             } else {
               messageDiv.textContent = data.error || "Error al registrarse.";
               messageDiv.style.color = "red";
