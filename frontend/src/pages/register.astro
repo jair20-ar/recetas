@@ -121,7 +121,7 @@
     <form id="register-form">
       <input type="text" id="name" placeholder="Su nombre completo" required />
       <input type="email" id="email" placeholder="Correo electrónico" required />
-      <input type="password" id="password" placeholder="Contraseña" required />
+      <input type="password" id="password" placeholder="Contraseña" required min="6"/>
       <button type="submit">Registrarse</button>
     </form>
     <div id="message"></div>
@@ -136,9 +136,10 @@
           const name = document.getElementById('name').value.trim();
           const email = document.getElementById('email').value.trim();
           const password = document.getElementById('password').value.trim();
-
+          //console.log (password.length)
+          //if (password.length<6){alert("minimo 6 caracteres"); return}
           try {
-            const response = await fetch('http://localhost:4322/api/register', {
+            const response = await fetch('http://localhost:4322/api/users/register', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ name, email, password }),

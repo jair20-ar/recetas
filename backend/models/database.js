@@ -3,7 +3,7 @@ const path = require("path");
 
 console.log("Cargando el módulo database.js...");
 
-const dbPath = path.resolve(__dirname, "../db.sqlite");
+const dbPath = path.resolve(__dirname, "../database.sqlite");
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error("Error al conectar con la base de datos:", err.message);

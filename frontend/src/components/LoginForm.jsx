@@ -1,15 +1,19 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
+      console.log("Datos enviados al backend:", { email, password });
+
+      const response = await fetch("http://localhost:4322/api/users/login", {
+        method: "POST", // Cambiado al puerto correcto del backend
         headers: {
           "Content-Type": "application/json",
         },
@@ -18,20 +22,23 @@ function LoginForm() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Inicio de sesión exitoso");
-        console.log("Datos del usuario:", data);
+        console.log("Inicio de sesión exitoso:", data);
+        localStorage.setItem("token", data.token); // Guarda el token en localStorage
+        navigate("/home"); // Redirige a la página 'home'
       } else {
-        alert(data.error || "Error al iniciar sesión");
+        console.error("Error en el inicio de sesión:", data.error);
+        setError(data.error || "Error al iniciar sesión");
       }
     } catch (error) {
       console.error("Error al conectar con el servidor:", error);
-      alert("Error de conexión");
+      setError("Error de conexión al servidor.");
     }
   };
 
   return (
     <form onSubmit={handleLogin}>
       <h1>Iniciar Sesión</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <label>
         Correo Electrónico:
         <input

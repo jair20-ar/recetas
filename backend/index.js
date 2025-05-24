@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const Database = require("better-sqlite3"); // Paquete para manejar SQLite
+const userRoutes = require("./routes/userRoutes"); // Importar las rutas de usuario
 
 const app = express();
 
@@ -21,7 +22,7 @@ db.prepare(`
 
 // Configuración de CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:4322", // Permite solicitudes solo desde el frontend
+  origin: process.env.FRONTEND_URL || "http://localhost:4321", // Permite solicitudes solo desde el frontend
   methods: ["GET", "POST", "PUT", "DELETE"], // Métodos HTTP permitidos
   allowedHeaders: ["Content-Type", "Authorization"], // Cabeceras permitidas
 };
@@ -33,6 +34,9 @@ app.use((req, res, next) => {
   console.log(`Solicitud desde el origen: ${req.headers.origin}`);
   next();
 });
+
+// Rutas de usuario
+app.use("/api/users", userRoutes); // Prefijo para las rutas de usuario
 
 // Ruta para registrar usuarios
 app.post("/api/register", (req, res) => {
