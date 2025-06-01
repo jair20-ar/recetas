@@ -1,47 +1,62 @@
----
----
-
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Página de Recetas</title>
+    <title>Aplicación de Recetas</title>
     <style>
       :root {
-        --bg-color: linear-gradient(135deg, #1a1a40, #0c0c1c);
+        --bg-color: linear-gradient(135deg, rgba(15, 32, 39, 0.8), rgba(32, 58, 67, 0.8), rgba(44, 83, 100, 0.8));
         --text-color: #ffffff;
-        --primary-color: #6c63ff;
-        --primary-color-hover: #836fff;
-        --button-bg: rgba(255, 255, 255, 0.1);
-        --button-border: rgba(255, 255, 255, 0.3);
-        --button-hover-bg: rgba(255, 255, 255, 0.2);
-        --star-color: rgba(255, 255, 255, 0.8);
+        --form-bg: rgba(255, 255, 255, 0.2);
+        --form-border: rgba(255, 255, 255, 0.3);
+        --form-shadow: rgba(0, 0, 0, 0.4);
+        --button-bg: linear-gradient(90deg, #9c0720, #610000);
+        --button-hover-bg: linear-gradient(90deg, #610000, #9c0720);
+        --button-shadow: rgba(156, 7, 32, 0.5);
+        --link-color: #ffffff;
+        --link-hover-color: #f1666d;
       }
 
       body {
         margin: 0;
         font-family: 'Arial', sans-serif;
-        background: var(--bg-color);
+        background: var(--bg-color), url('/src/assets/img/saludable.jpg');
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay; /* Combina el degradado con la imagen */
         color: var(--text-color);
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
         overflow: hidden;
         text-align: center;
+        position: relative;
+      }
+
+      .background-design {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-color);
+        z-index: 0;
+        opacity: 0.9;
       }
 
       h1 {
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 0 20px var(--primary-color);
+        font-size: 2.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
       }
 
       p {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         margin-bottom: 2rem;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(224, 247, 250, 0.8);
+        animation: fadeIn 2s ease-in-out;
       }
 
       .options {
@@ -49,82 +64,64 @@
         flex-direction: column;
         align-items: center;
         gap: 1rem;
+        animation: fadeIn 3s ease-in-out;
       }
 
       .button {
         display: inline-block;
-        padding: 15px 30px;
-        font-size: 1rem;
+        padding: 15px 40px;
+        font-size: 1.2rem;
         color: var(--text-color);
         background: var(--button-bg);
-        border: 1px solid var(--button-border);
-        border-radius: 5px;
+        border: none;
+        border-radius: 30px;
         text-decoration: none;
         cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
-        backdrop-filter: blur(5px);
+        transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 5px 15px var(--button-shadow);
       }
 
       .button:hover {
         background: var(--button-hover-bg);
-        transform: translateY(-3px);
+        color: var(--text-color);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--button-shadow);
       }
 
-      .stars {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: -1;
+      .card {
+        background: var(--form-bg);
+        border: 1px solid var(--form-border);
+        border-radius: 20px;
+        box-shadow: 0 8px 20px var(--form-shadow);
+        padding: 2.5rem 1.5rem;
+        width: 90%;
+        max-width: 400px;
+        backdrop-filter: blur(15px);
+        text-align: center;
+        position: relative;
+        z-index: 1;
       }
 
-      .stars span {
-        position: absolute;
-        display: block;
-        width: 2px;
-        height: 2px;
-        background: var(--star-color);
-        animation: twinkle 2s infinite ease-in-out;
-      }
-
-      @keyframes twinkle {
-        0%, 100% {
-          opacity: 0.8;
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
         }
-        50% {
-          opacity: 0.2;
+        to {
+          opacity: 1;
+          transform: scale(1);
         }
       }
     </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Seleccionamos el contenedor para las estrellas
-        const starsContainer = document.querySelector('.stars');
-        if (!starsContainer) {
-          console.error("El contenedor `.stars` no existe.");
-          return; // Salimos si no existe
-        }
-
-        // Generamos las estrellas
-        for (let i = 0; i < 100; i++) {
-          const star = document.createElement('span');
-          star.style.top = `${Math.random() * 100}%`;
-          star.style.left = `${Math.random() * 100}%`;
-          star.style.animationDelay = `${Math.random() * 2}s`;
-          starsContainer.appendChild(star);
-        }
-      });
-    </script>
   </head>
   <body>
-    <div class="stars"></div>
-    <h1>Bienvenido a mi aplicación</h1>
-    <p>Por favor selecciona una opción para continuar</p>
-    <div class="options">
-      <a href="/login" class="button">Iniciar sesión</a>
-      <a href="/register" class="button">Registrarse</a>
+    <div class="background-design"></div>
+    <div class="card">
+      <h1>Bienvenido a la Aplicación de Recetas</h1>
+      <p>Explora las mejores recetas y crea tu propia colección</p>
+      <div class="options">
+        <a href="/login" class="button">Iniciar Sesión</a>
+      </div>
     </div>
   </body>
 </html>

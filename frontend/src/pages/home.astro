@@ -1,5 +1,5 @@
 ---
---- 
+---
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -7,12 +7,19 @@
     <title>Página Principal</title>
     <style>
       :root {
-        --bg-color: linear-gradient(135deg, #1a1a40, #0c0c1c);
+        --bg-color: linear-gradient(135deg, #610000, #9c0720, #f1666d);
         --text-color: #ffffff;
-        --nav-bg: rgba(255, 255, 255, 0.1);
-        --nav-border: rgba(255, 255, 255, 0.2);
-        --nav-hover: #6c63ff;
-        --button-hover-bg: #836fff;
+        --form-bg: rgba(255, 255, 255, 0.2);
+        --form-border: rgba(255, 255, 255, 0.3);
+        --form-shadow: rgba(0, 0, 0, 0.4);
+        --input-bg: #ffffff;
+        --input-border: rgba(0, 0, 0, 0.2);
+        --input-focus-border: #9c0720;
+        --button-bg: linear-gradient(90deg, #9c0720, #610000);
+        --button-hover-bg: linear-gradient(90deg, #610000, #9c0720);
+        --button-shadow: rgba(156, 7, 32, 0.5);
+        --link-color: #ffffff;
+        --link-hover-color: #f1666d;
       }
 
       body {
@@ -22,19 +29,54 @@
         color: var(--text-color);
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
         height: 100vh;
+        overflow: hidden;
+        text-align: center;
+        position: relative;
+      }
+
+      .background-design {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #610000, #9c0720, #f1666d);
+        clip-path: polygon(
+          25% 0%,
+          100% 0%,
+          75% 50%,
+          100% 100%,
+          25% 100%,
+          0% 50%
+        );
+        z-index: 0;
+        opacity: 0.9;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
       }
 
       nav {
-        background: var(--nav-bg);
-        width: 100%;
+        background: var(--form-bg);
+        border: 1px solid var(--form-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px var(--form-shadow);
         padding: 1rem;
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        border-bottom: 1px solid var(--nav-border);
+        width: 90%;
+        max-width: 600px;
         backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
       }
 
       nav a {
@@ -45,22 +87,56 @@
       }
 
       nav a:hover {
-        color: var(--nav-hover);
-      }
-
-      h1 {
-        margin-top: 2rem;
-        font-size: 2.5rem;
-        text-shadow: 0 0 20px var(--nav-hover);
+        color: var(--link-hover-color);
       }
 
       section {
-        margin: 2rem;
+        width: 90%;
+        max-width: 600px;
         text-align: center;
+        background: var(--form-bg);
+        border: 1px solid var(--form-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px var(--form-shadow);
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        animation: fadeIn 1.5s ease-out;
+        position: relative;
+        z-index: 1;
+      }
+
+      .user-info {
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        color: var(--link-color);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
     </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const userInfo = document.getElementById("user-info");
+        const userName = localStorage.getItem("userName"); // Obtén el nombre del usuario
+
+        if (userName) {
+          userInfo.textContent = `Hola, ${userName}`; // Muestra el nombre del usuario
+        } else {
+          userInfo.textContent = "Hola, Usuario"; // Mensaje por defecto
+        }
+      });
+    </script>
   </head>
   <body>
+    <div class="background-design"></div>
     <nav>
       <a href="/register-recipe">Registrar Nueva Receta</a>
       <a href="/recipes/vegetarianas">Vegetarianas</a>
@@ -68,8 +144,9 @@
       <a href="/recipes/veganas">Veganas</a>
       <a href="/recipes/favoritas">Favoritas</a>
     </nav>
-    <h1>Bienvenido a la Página Principal</h1>
     <section>
+      <div class="user-info" id="user-info"></div>
+      <h1>Bienvenido a la Página Principal</h1>
       <p>Selecciona una opción del menú para comenzar.</p>
     </section>
   </body>
