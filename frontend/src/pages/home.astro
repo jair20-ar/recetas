@@ -111,6 +111,156 @@
         color: var(--link-color);
       }
 
+      /* --- ESTILOS PARA EL MODAL Y FORMULARIO --- */
+      #modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+      }
+      #modal.active {
+        display: flex;
+      }
+      #recipeForm {
+        background: #fff;
+        color: #222;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(156,7,32,0.2);
+        min-width: 320px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position:relative;
+        max-width: 90vw;
+      }
+      #recipeForm label {
+        text-align:left;
+        font-weight: bold;
+      }
+      #recipeForm input[type="text"],
+      #recipeForm textarea,
+      #recipeForm select {
+        width: 100%;
+        border: 1px solid var(--input-border);
+        border-radius: 5px;
+        padding: 0.5rem;
+        box-sizing: border-box;
+        margin-top: 4px;
+      }
+      #recipeForm textarea {
+        resize: vertical;
+        min-height: 50px;
+      }
+      #recipeForm input[type="file"] {
+        display: none;
+      }
+      #customImageBtn {
+        background: var(--button-bg);
+        color: #fff;
+        border: none;
+        padding: 0.6rem 1.3rem;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px var(--button-shadow);
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+      }
+      #customImageBtn:hover {
+        background: var(--button-hover-bg);
+      }
+      #imageFileName {
+        color: #9c0720;
+        font-size: 0.99rem;
+      }
+      #addIngredientBtn {
+        background: var(--button-bg);
+        color: #fff;
+        border: none;
+        padding: 0.3rem 1rem;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px var(--button-shadow);
+        margin-top: 0.4rem;
+        cursor: pointer;
+        font-size: 0.98rem;
+        transition: background 0.3s;
+      }
+      #addIngredientBtn:hover {
+        background: var(--button-hover-bg);
+      }
+      .removeIngredientBtn {
+        background: none;
+        border: none;
+        color: #9c0720;
+        font-size: 1.3rem;
+        cursor: pointer;
+        margin-left: 0.2rem;
+      }
+      #recipeForm button[type="submit"] {
+        background: var(--button-bg);
+        color: #fff;
+        border:none;
+        padding:0.6rem 1.2rem;
+        border-radius:6px;
+        box-shadow:0 2px 8px var(--button-shadow);
+        cursor:pointer;
+        transition: background 0.3s;
+        font-size: 1rem;
+      }
+      #recipeForm button[type="submit"]:hover {
+        background: var(--button-hover-bg);
+      }
+      #closeModalBtn {
+        position:absolute;
+        top:10px;
+        right:14px;
+        font-size:1.3rem;
+        background:none;
+        border:none;
+        cursor:pointer;
+        color: #9c0720;
+        font-weight: bold;
+      }
+
+      /* --- ESTILOS PARA EL BUSCADOR Y RECETAS --- */
+      #searchInput {
+        margin: 1.5rem 0 1rem 0;
+        padding: 0.7rem 1.1rem;
+        border-radius: 8px;
+        border: 1.5px solid var(--form-border);
+        background: #fff8fa;
+        font-size: 1.1rem;
+        box-shadow: 0 2px 8px rgba(156,7,32,0.08);
+        outline: none;
+        transition: border 0.2s, box-shadow 0.2s;
+      }
+      #searchInput:focus {
+        border: 2px solid var(--input-focus-border);
+        box-shadow: 0 2px 12px rgba(156,7,32,0.13);
+      }
+      #recipesList {
+        margin-top: 2rem;
+        text-align: left;
+        max-height: 50vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #f1666d #fff8fa;
+      }
+      #recipesList::-webkit-scrollbar {
+        width: 8px;
+        background: #fff8fa;
+      }
+      #recipesList::-webkit-scrollbar-thumb {
+        background: #f1666d;
+        border-radius: 4px;
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -138,7 +288,7 @@
   <body>
     <div class="background-design"></div>
     <nav>
-      <a href="/register-recipe">Registrar Nueva Receta</a>
+      <a href="#" id="navOpenModal">Registrar Nueva Receta</a>
       <a href="/recipes/vegetarianas">Vegetarianas</a>
       <a href="/recipes/carnivoras">Carnívoras</a>
       <a href="/recipes/veganas">Veganas</a>
@@ -148,6 +298,200 @@
       <div class="user-info" id="user-info"></div>
       <h1>Bienvenido a la Página Principal</h1>
       <p>Selecciona una opción del menú para comenzar.</p>
+      <!-- BUSCADOR SOLO -->
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar recetas por título..."
+      />
+      <!-- RESULTADOS DE RECETAS -->
+      <div id="recipesList"></div>
     </section>
+
+    <!-- MODAL Y FORMULARIO PARA REGISTRAR RECETA -->
+    <div id="modal">
+      <form id="recipeForm" enctype="multipart/form-data" autocomplete="off">
+        <button type="button" id="closeModalBtn" title="Cerrar">✖</button>
+        <!-- Imagen estilizada -->
+        <label>
+          Imagen:
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <input type="file" name="image" id="imageInput" accept="image/*" style="display:none;" required />
+            <button
+              type="button"
+              id="customImageBtn"
+            >
+              Seleccionar imagen
+            </button>
+            <span id="imageFileName"></span>
+          </div>
+        </label>
+        <label>
+          Título:
+          <input type="text" name="title" required />
+        </label>
+        <label>
+          Categoría:
+          <select name="category" required>
+            <option value="vegetariana">Vegetariana</option>
+            <option value="carnivora">Carnívora</option>
+            <option value="vegana">Vegana</option>
+          </select>
+        </label>
+        <!-- INGREDIENTES LISTA -->
+        <label>
+          Ingredientes:
+          <div id="ingredientsList">
+            <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+              <input type="text" name="ingredient" required placeholder="Ingrediente" style="flex:1;" />
+              <button type="button" class="removeIngredientBtn" style="display:none;" title="Quitar ingrediente">–</button>
+            </div>
+          </div>
+          <button type="button" id="addIngredientBtn">
+            + Agregar ingrediente
+          </button>
+        </label>
+        <label>
+          Preparación:
+          <textarea name="instructions" required></textarea>
+        </label>
+        <button type="submit">Guardar</button>
+      </form>
+    </div>
+
+    <!-- SCRIPTS MODAL, ENVÍO DE FORMULARIO, BUSQUEDA Y LISTADO -->
+    <script>
+      // Imagen estilizada
+      document.getElementById('customImageBtn').onclick = function() {
+        document.getElementById('imageInput').click();
+      };
+      document.getElementById('imageInput').onchange = function() {
+        document.getElementById('imageFileName').textContent = this.files.length ? this.files[0].name : '';
+      };
+
+      // Ingredientes dinámicos
+      const ingredientsList = document.getElementById('ingredientsList');
+      const addIngredientBtn = document.getElementById('addIngredientBtn');
+      addIngredientBtn.onclick = function() {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '0.5rem';
+        div.style.marginBottom = '0.4rem';
+        div.innerHTML = `
+          <input type="text" name="ingredient" required placeholder="Ingrediente" style="flex:1;" />
+          <button type="button" class="removeIngredientBtn" title="Quitar ingrediente">–</button>
+        `;
+        div.querySelector('.removeIngredientBtn').onclick = function() {
+          ingredientsList.removeChild(div);
+          updateRemoveButtons();
+        };
+        ingredientsList.appendChild(div);
+        updateRemoveButtons();
+      };
+
+      // Permite quitar solo si hay >1 ingrediente
+      function updateRemoveButtons() {
+        const btns = ingredientsList.querySelectorAll('.removeIngredientBtn');
+        if (btns.length > 1) {
+          btns.forEach(btn => btn.style.display = '');
+        } else {
+          btns.forEach(btn => btn.style.display = 'none');
+        }
+      }
+      updateRemoveButtons();
+
+      // Modal control
+      const modal = document.getElementById('modal');
+      const closeBtn = document.getElementById('closeModalBtn');
+      // NAV abre el modal
+      document.getElementById("navOpenModal").addEventListener("click", function(e) {
+        e.preventDefault();
+        modal.classList.add('active');
+      });
+      closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
+      // Cerrar modal al hacer click fuera del formulario
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+      });
+
+      // Modifica el envío del formulario para juntar ingredientes
+      const form = document.getElementById('recipeForm');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        // Junta todos los ingredientes en una lista separada por salto de línea
+        const ingredientInputs = ingredientsList.querySelectorAll('input[name="ingredient"]');
+        const ingredients = Array.from(ingredientInputs).map(i => i.value.trim()).filter(Boolean);
+        formData.delete('ingredient'); // Borra los campos individuales
+        formData.append('ingredients', ingredients.join('\n')); // junta en un solo campo
+
+        try {
+          const res = await fetch('/api/recipes', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (res.ok) {
+            alert('Receta registrada exitosamente');
+            form.reset();
+            modal.classList.remove('active');
+            fetchAndRenderRecipes(document.getElementById("searchInput").value.trim());
+            document.getElementById('imageFileName').textContent = '';
+            // Reset ingredientes a 1 campo
+            while (ingredientsList.children.length > 1) ingredientsList.removeChild(ingredientsList.lastChild);
+            updateRemoveButtons();
+          } else {
+            const err = await res.json();
+            alert('Error: ' + (err.error || 'al registrar la receta'));
+          }
+        } catch (err) {
+          alert('Error de red');
+        }
+      });
+
+      // Buscador y render
+      async function fetchAndRenderRecipes(filter = "") {
+        try {
+          const res = await fetch('/api/recipes');
+          const data = await res.json();
+          let recipes = Array.isArray(data) ? data : [];
+          if (filter) {
+            recipes = recipes.filter(r =>
+              r.title && r.title.toLowerCase().includes(filter.toLowerCase())
+            );
+          }
+          renderRecipes(recipes);
+        } catch (err) {
+          renderRecipes([]);
+        }
+      }
+
+      function renderRecipes(recipes) {
+        const list = document.getElementById("recipesList");
+        if (!recipes.length) {
+          list.innerHTML = "<p>No se encontraron recetas.</p>";
+          return;
+        }
+        list.innerHTML = recipes.map(recipe => `
+          <div style="background:rgba(255,255,255,0.85);color:#222;border-radius:9px;box-shadow:0 2px 8px rgba(156,7,32,0.09);padding:1rem;margin-bottom:1.2rem;text-align:left;">
+            ${recipe.image ? `<img src="/uploads/${recipe.image}" alt="${recipe.title}" style="max-width:120px;border-radius:8px;float:right;margin-left:1rem;margin-bottom:1rem;">` : ""}
+            <h3 style="margin:0 0 0.5rem 0;">${recipe.title}</h3>
+            <span style="font-size:0.95rem;background:#9c0720;color:#fff;padding:2px 8px;border-radius:4px;">${recipe.category || "Sin Categoría"}</span>
+            <p style="margin-top:0.5rem;"><b>Ingredientes:</b><br> ${recipe.ingredients ? recipe.ingredients.replace(/\n/g, '<br>') : ""}</p>
+            <p><b>Preparación:</b> ${recipe.instructions}</p>
+            <div style="clear:both;"></div>
+          </div>
+        `).join("");
+      }
+
+      // Buscar mientras se escribe
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        fetchAndRenderRecipes(e.target.value.trim());
+      });
+
+      // Cargar todas las recetas al iniciar
+      fetchAndRenderRecipes();
+    </script>
   </body>
 </html>
