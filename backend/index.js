@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const Database = require("better-sqlite3"); // Paquete para manejar SQLite
 const userRoutes = require("./routes/userRoutes"); // Importar las rutas de usuario
+const recipeRoutes = require("./routes/recipeRoutes"); // <--- ¡Agregado!
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.use((req, res, next) => {
 
 // Rutas de usuario
 app.use("/api/users", userRoutes); // Prefijo para las rutas de usuario
+// Rutas de recetas
+app.use("/api/recipes", recipeRoutes); // <--- ¡Agregado!
 
 // Ruta para registrar usuarios
 app.post("/api/register", (req, res) => {

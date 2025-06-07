@@ -1,5 +1,3 @@
----
----
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -111,7 +109,6 @@
         color: var(--link-color);
       }
 
-      /* --- ESTILOS PARA EL MODAL Y FORMULARIO --- */
       #modal {
         display: none;
         position: fixed;
@@ -228,7 +225,6 @@
         font-weight: bold;
       }
 
-      /* --- ESTILOS PARA EL BUSCADOR Y RECETAS --- */
       #searchInput {
         margin: 1.5rem 0 1rem 0;
         padding: 0.7rem 1.1rem;
@@ -275,12 +271,11 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const userInfo = document.getElementById("user-info");
-        const userName = localStorage.getItem("userName"); // Obtén el nombre del usuario
-
+        const userName = localStorage.getItem("userName");
         if (userName) {
-          userInfo.textContent = `Hola, ${userName}`; // Muestra el nombre del usuario
+          userInfo.textContent = `Hola, ${userName}`;
         } else {
-          userInfo.textContent = "Hola, Usuario"; // Mensaje por defecto
+          userInfo.textContent = "Hola, Usuario";
         }
       });
     </script>
@@ -298,31 +293,18 @@
       <div class="user-info" id="user-info"></div>
       <h1>Bienvenido a la Página Principal</h1>
       <p>Selecciona una opción del menú para comenzar.</p>
-      <!-- BUSCADOR SOLO -->
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Buscar recetas por título..."
-      />
-      <!-- RESULTADOS DE RECETAS -->
+      <input type="text" id="searchInput" placeholder="Buscar recetas por título..." />
       <div id="recipesList"></div>
     </section>
 
-    <!-- MODAL Y FORMULARIO PARA REGISTRAR RECETA -->
     <div id="modal">
       <form id="recipeForm" enctype="multipart/form-data" autocomplete="off">
         <button type="button" id="closeModalBtn" title="Cerrar">✖</button>
-        <!-- Imagen estilizada -->
         <label>
           Imagen:
           <div style="display: flex; align-items: center; gap: 1rem;">
             <input type="file" name="image" id="imageInput" accept="image/*" style="display:none;" required />
-            <button
-              type="button"
-              id="customImageBtn"
-            >
-              Seleccionar imagen
-            </button>
+            <button type="button" id="customImageBtn">Seleccionar imagen</button>
             <span id="imageFileName"></span>
           </div>
         </label>
@@ -338,7 +320,6 @@
             <option value="vegana">Vegana</option>
           </select>
         </label>
-        <!-- INGREDIENTES LISTA -->
         <label>
           Ingredientes:
           <div id="ingredientsList">
@@ -347,9 +328,7 @@
               <button type="button" class="removeIngredientBtn" style="display:none;" title="Quitar ingrediente">–</button>
             </div>
           </div>
-          <button type="button" id="addIngredientBtn">
-            + Agregar ingrediente
-          </button>
+          <button type="button" id="addIngredientBtn">+ Agregar ingrediente</button>
         </label>
         <label>
           Preparación:
@@ -359,9 +338,7 @@
       </form>
     </div>
 
-    <!-- SCRIPTS MODAL, ENVÍO DE FORMULARIO, BUSQUEDA Y LISTADO -->
     <script>
-      // Imagen estilizada
       document.getElementById('customImageBtn').onclick = function() {
         document.getElementById('imageInput').click();
       };
@@ -369,7 +346,6 @@
         document.getElementById('imageFileName').textContent = this.files.length ? this.files[0].name : '';
       };
 
-      // Ingredientes dinámicos
       const ingredientsList = document.getElementById('ingredientsList');
       const addIngredientBtn = document.getElementById('addIngredientBtn');
       addIngredientBtn.onclick = function() {
@@ -388,8 +364,6 @@
         ingredientsList.appendChild(div);
         updateRemoveButtons();
       };
-
-      // Permite quitar solo si hay >1 ingrediente
       function updateRemoveButtons() {
         const btns = ingredientsList.querySelectorAll('.removeIngredientBtn');
         if (btns.length > 1) {
@@ -400,45 +374,41 @@
       }
       updateRemoveButtons();
 
-      // Modal control
       const modal = document.getElementById('modal');
       const closeBtn = document.getElementById('closeModalBtn');
-      // NAV abre el modal
       document.getElementById("navOpenModal").addEventListener("click", function(e) {
         e.preventDefault();
         modal.classList.add('active');
       });
       closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
-      // Cerrar modal al hacer click fuera del formulario
       modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.remove('active');
       });
 
-      // Modifica el envío del formulario para juntar ingredientes
+      // AQUÍ EL FETCH ENVÍA EL TOKEN JWT
       const form = document.getElementById('recipeForm');
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
-
-        // Junta todos los ingredientes en una lista separada por salto de línea
         const ingredientInputs = ingredientsList.querySelectorAll('input[name="ingredient"]');
         const ingredients = Array.from(ingredientInputs).map(i => i.value.trim()).filter(Boolean);
-        formData.delete('ingredient'); // Borra los campos individuales
-        formData.append('ingredients', ingredients.join('\n')); // junta en un solo campo
-
+        formData.delete('ingredient');
+        formData.append('ingredients', ingredients.join('\n'));
         try {
-          const res = await fetch('/api/recipes', {
+          const token = localStorage.getItem('token');
+          const res = await fetch('http://localhost:4322/api/recipes', {
             method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + token
+            },
             body: formData
           });
-
           if (res.ok) {
             alert('Receta registrada exitosamente');
             form.reset();
             modal.classList.remove('active');
             fetchAndRenderRecipes(document.getElementById("searchInput").value.trim());
             document.getElementById('imageFileName').textContent = '';
-            // Reset ingredientes a 1 campo
             while (ingredientsList.children.length > 1) ingredientsList.removeChild(ingredientsList.lastChild);
             updateRemoveButtons();
           } else {
@@ -450,7 +420,6 @@
         }
       });
 
-      // Buscador y render
       async function fetchAndRenderRecipes(filter = "") {
         try {
           const res = await fetch('/api/recipes');
@@ -466,7 +435,6 @@
           renderRecipes([]);
         }
       }
-
       function renderRecipes(recipes) {
         const list = document.getElementById("recipesList");
         if (!recipes.length) {
@@ -484,13 +452,9 @@
           </div>
         `).join("");
       }
-
-      // Buscar mientras se escribe
       document.getElementById("searchInput").addEventListener("input", (e) => {
         fetchAndRenderRecipes(e.target.value.trim());
       });
-
-      // Cargar todas las recetas al iniciar
       fetchAndRenderRecipes();
     </script>
   </body>
