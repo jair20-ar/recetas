@@ -1,3 +1,5 @@
+---
+--- 
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -123,6 +125,8 @@
       }
       #modal.active {
         display: flex;
+        overflow-y: auto;
+        align-items: flex-start;
       }
       #recipeForm {
         background: #fff;
@@ -136,6 +140,8 @@
         gap: 1rem;
         position:relative;
         max-width: 90vw;
+        max-height: 80vh;
+        overflow-y: auto;
       }
       #recipeForm label {
         text-align:left;
@@ -209,9 +215,8 @@
         cursor:pointer;
         transition: background 0.3s;
         font-size: 1rem;
-      }
-      #recipeForm button[type="submit"]:hover {
-        background: var(--button-hover-bg);
+        /* Se elimina position: sticky y relacionados */
+        margin-top: 2rem;
       }
       #closeModalBtn {
         position:absolute;
@@ -284,10 +289,10 @@
     <div class="background-design"></div>
     <nav>
       <a href="#" id="navOpenModal">Registrar Nueva Receta</a>
-      <a href="/recipes/vegetarianas">Vegetarianas</a>
-      <a href="/recipes/carnivoras">Carnívoras</a>
-      <a href="/recipes/veganas">Veganas</a>
-      <a href="/recipes/favoritas">Favoritas</a>
+      <a href="#" id="btnVegetarianas">Vegetarianas</a>
+      <a href="#" id="btnCarnivoras">Carnívoras</a>
+      <a href="#" id="btnVeganas">Veganas</a>
+      <a href="#" id="btnFavoritas">Favoritas</a>
     </nav>
     <section>
       <div class="user-info" id="user-info"></div>
@@ -339,6 +344,7 @@
     </div>
 
     <script>
+      // Imagen estilizada
       document.getElementById('customImageBtn').onclick = function() {
         document.getElementById('imageInput').click();
       };
@@ -346,6 +352,7 @@
         document.getElementById('imageFileName').textContent = this.files.length ? this.files[0].name : '';
       };
 
+      // Ingredientes dinámicos
       const ingredientsList = document.getElementById('ingredientsList');
       const addIngredientBtn = document.getElementById('addIngredientBtn');
       addIngredientBtn.onclick = function() {
@@ -374,6 +381,7 @@
       }
       updateRemoveButtons();
 
+      // Modal control
       const modal = document.getElementById('modal');
       const closeBtn = document.getElementById('closeModalBtn');
       document.getElementById("navOpenModal").addEventListener("click", function(e) {
@@ -385,7 +393,7 @@
         if (e.target === modal) modal.classList.remove('active');
       });
 
-      // AQUÍ EL FETCH ENVÍA EL TOKEN JWT
+      // Modifica el envío del formulario para juntar ingredientes y enviar token
       const form = document.getElementById('recipeForm');
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -407,7 +415,7 @@
             alert('Receta registrada exitosamente');
             form.reset();
             modal.classList.remove('active');
-            fetchAndRenderRecipes(document.getElementById("searchInput").value.trim());
+            fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), window.activeCategory || "");
             document.getElementById('imageFileName').textContent = '';
             while (ingredientsList.children.length > 1) ingredientsList.removeChild(ingredientsList.lastChild);
             updateRemoveButtons();
@@ -420,21 +428,35 @@
         }
       });
 
-      async function fetchAndRenderRecipes(filter = "") {
+      // Variable global para recetas
+      let allRecipes = [];
+
+      // Modifica fetchAndRenderRecipes para guardar todas las recetas en allRecipes
+      async function fetchAndRenderRecipes(filter = "", category = "") {
         try {
           const res = await fetch('/api/recipes');
           const data = await res.json();
-          let recipes = Array.isArray(data) ? data : [];
+          allRecipes = Array.isArray(data) ? data : [];
+          let recipes = allRecipes;
+
+          if (category) {
+            recipes = recipes.filter(r =>
+              r.category && r.category.trim().toLowerCase() === category.trim().toLowerCase()
+            );
+          }
+
           if (filter) {
             recipes = recipes.filter(r =>
               r.title && r.title.toLowerCase().includes(filter.toLowerCase())
             );
           }
+
           renderRecipes(recipes);
         } catch (err) {
           renderRecipes([]);
         }
       }
+
       function renderRecipes(recipes) {
         const list = document.getElementById("recipesList");
         if (!recipes.length) {
@@ -452,10 +474,48 @@
           </div>
         `).join("");
       }
+
+      // Buscar mientras se escribe
       document.getElementById("searchInput").addEventListener("input", (e) => {
-        fetchAndRenderRecipes(e.target.value.trim());
+        if (window.activeCategory) {
+          const filtered = allRecipes
+            .filter(r => r.category && r.category.trim().toLowerCase() === window.activeCategory)
+            .filter(r => r.title && r.title.toLowerCase().includes(e.target.value.trim().toLowerCase()));
+          renderRecipes(filtered);
+        } else {
+          fetchAndRenderRecipes(e.target.value.trim());
+        }
       });
+
+      // Al cargar, trae todas las recetas (sin filtro)
       fetchAndRenderRecipes();
+
+      // Manejo de botones de categoría
+      window.activeCategory = ""; // para saber si hay una categoría activa
+
+      document.getElementById("btnVegetarianas").addEventListener("click", function(e) {
+        e.preventDefault();
+        window.activeCategory = "vegetariana";
+        fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), "vegetariana");
+      });
+      document.getElementById("btnCarnivoras").addEventListener("click", function(e) {
+        e.preventDefault();
+        window.activeCategory = "carnivora";
+        fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), "carnivora");
+      });
+      document.getElementById("btnVeganas").addEventListener("click", function(e) {
+        e.preventDefault();
+        window.activeCategory = "vegana";
+        fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), "vegana");
+      });
+      document.getElementById("btnFavoritas").addEventListener("click", function(e) {
+        e.preventDefault();
+        window.activeCategory = "favoritas";
+        // Si tienes una propiedad especial para favoritas, cámbiala aquí.
+        const filtered = allRecipes.filter(r => r.category && r.category.trim().toLowerCase() === "favoritas");
+        renderRecipes(filtered);
+      });
+
     </script>
   </body>
 </html>
