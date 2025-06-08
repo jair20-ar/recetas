@@ -1,5 +1,5 @@
 ---
---- 
+---
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -7,43 +7,35 @@
     <title>Página Principal</title>
     <style>
       :root {
-        --bg-color: linear-gradient(135deg, #610000, #9c0720, #f1666d);
+        --rojo-dark: #610000;
+        --rojo-main: #9c0720;
+        --rojo-claro: #f1666d;
+        --bg-color: linear-gradient(135deg, var(--rojo-dark), var(--rojo-main), var(--rojo-claro));
         --text-color: #ffffff;
         --form-bg: rgba(255, 255, 255, 0.2);
         --form-border: rgba(255, 255, 255, 0.3);
         --form-shadow: rgba(0, 0, 0, 0.4);
-        --input-bg: #ffffff;
-        --input-border: rgba(0, 0, 0, 0.2);
-        --input-focus-border: #9c0720;
-        --button-bg: linear-gradient(90deg, #9c0720, #610000);
-        --button-hover-bg: linear-gradient(90deg, #610000, #9c0720);
-        --button-shadow: rgba(156, 7, 32, 0.5);
-        --link-color: #ffffff;
-        --link-hover-color: #f1666d;
+        --dropdown-bg: #fff;
+        --dropdown-shadow: 0 4px 18px #9c072055;
+        --dropdown-border: #f1666d;
       }
-
       body {
         margin: 0;
-        font-family: 'Arial', sans-serif;
+        font-family: 'Montserrat', 'Arial', sans-serif;
         background: var(--bg-color);
         color: var(--text-color);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
+        min-height: 100vh;
         text-align: center;
         position: relative;
+        letter-spacing: 0.01em;
       }
-
       .background-design {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #610000, #9c0720, #f1666d);
+        width: 100vw;
+        height: 100vh;
+        background: var(--bg-color);
         clip-path: polygon(
           25% 0%,
           100% 0%,
@@ -53,64 +45,234 @@
           0% 50%
         );
         z-index: 0;
-        opacity: 0.9;
+        opacity: 0.92;
+        filter: blur(1px);
       }
-
-      h1 {
-        font-size: 2.8rem;
-        margin-bottom: 1.5rem;
+      .user-profile-container {
+        position: absolute;
+        top: 22px;
+        left: 30px;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        gap: 0.7em;
+      }
+      .profile-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.7em;
+        background: var(--form-bg);
+        border: 1.1px solid var(--form-border);
+        border-radius: 23px;
+        cursor: pointer;
+        padding: 0.36em 1em 0.36em 0.36em;
         color: var(--text-color);
-        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        font-size: 1.14rem;
+        font-weight: 600;
+        box-shadow: 0 2px 9px #61000022;
+        transition: background 0.2s, box-shadow 0.2s;
+        min-width: 40px;
+        outline: none;
+        position: relative;
+        height: 44px;
       }
-
+      .profile-btn:hover, .profile-btn:focus {
+        background: rgba(255,255,255,0.26);
+        box-shadow: 0 4px 18px #9c072055;
+      }
+      .profile-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#fff,#f1666d99 90%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.28rem;
+        border: 2px solid #f1666d;
+        box-shadow: 0 2px 8px #9c072066;
+      }
+      .profile-dropdown {
+        position: absolute;
+        left: 0;
+        top: 110%;
+        min-width: 205px;
+        background: var(--dropdown-bg);
+        color: #9c0720;
+        border: 1.2px solid var(--dropdown-border);
+        border-radius: 13px;
+        box-shadow: var(--dropdown-shadow);
+        z-index: 99;
+        padding: 1.1em 1em 1.2em 1em;
+        display: none;
+        flex-direction: column;
+        animation: fadeIn 0.23s;
+      }
+      .profile-dropdown.active {
+        display: flex;
+      }
+      .dropdown-header {
+        font-weight: 700;
+        font-size: 1.09rem;
+        margin-bottom: 0.9em;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: center;
+        gap: 0.45em;
+      }
+      .dropdown-option {
+        cursor: pointer;
+        padding: 0.48em 0.4em;
+        border-radius: 7px;
+        transition: background 0.18s, color 0.18s;
+        font-size: 1.07rem;
+        margin-bottom: 0.24em;
+        text-align: left;
+      }
+      .dropdown-option:hover {
+        background: #f1666d22;
+        color: #610000;
+      }
+      .dropdown-divider {
+        border: none;
+        border-top: 1.1px solid #f1666d33;
+        margin: 0.6em 0 1em 0;
+      }
+      .my-recipes-list {
+        margin-top: 0.5em;
+        max-height: 170px;
+        overflow-y: auto;
+        padding-left: 0.2em;
+        font-size: 0.99rem;
+      }
+      .my-recipes-list-title {
+        font-weight: 600;
+        font-size: 1.01rem;
+        margin-bottom: 0.4em;
+        color: #9c0720;
+      }
+      .my-recipes-item {
+        margin-bottom: 0.3em;
+        color: #9c0720;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+      }
+      .my-recipes-item img {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        object-fit: cover;
+        border: 1.1px solid #f1666d55;
+      }
       nav {
         background: var(--form-bg);
         border: 1px solid var(--form-border);
-        border-radius: 15px;
-        box-shadow: 0 4px 15px var(--form-shadow);
-        padding: 1rem;
+        border-radius: 18px;
+        box-shadow: 0 4px 22px var(--form-shadow);
+        padding: 1.05rem 1.15rem;
         width: 90%;
-        max-width: 600px;
+        max-width: 610px;
         backdrop-filter: blur(10px);
         display: flex;
-        justify-content: space-around;
-        margin-bottom: 2rem;
+        justify-content: center;
+        align-items: center;
+        gap: 1.35rem;
+        margin: 2.5rem auto 2rem auto;
         position: relative;
-        z-index: 1;
+        z-index: 2;
       }
-
-      nav a {
+      nav a, nav button {
         color: var(--text-color);
         text-decoration: none;
-        font-size: 1.2rem;
-        transition: color 0.3s;
-      }
-
-      nav a:hover {
-        color: var(--link-hover-color);
-      }
-
-      section {
-        width: 90%;
-        max-width: 600px;
-        text-align: center;
-        background: var(--form-bg);
-        border: 1px solid var(--form-border);
-        border-radius: 15px;
-        box-shadow: 0 4px 15px var(--form-shadow);
-        padding: 2rem;
-        backdrop-filter: blur(10px);
-        animation: fadeIn 1.5s ease-out;
+        font-size: 1.19rem;
+        transition: color 0.3s, background 0.3s, box-shadow 0.3s;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0.51em 1.18em;
+        border-radius: 10px;
+        margin: 0 2px;
+        font-weight: 600;
+        box-shadow: none;
+        outline: none;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.15;
         position: relative;
+        letter-spacing: 0.01em;
+      }
+      nav a:focus-visible, nav button:focus-visible {
+        outline: 2px solid #f1666d;
+        outline-offset: 2px;
+      }
+      nav a:hover, nav button:hover, nav a:focus, nav button:focus {
+        color: #fff;
+        background: linear-gradient(90deg,#f1666d 30%,#9c0720 100%);
+        box-shadow: 0 2px 13px #f1666dbf;
         z-index: 1;
       }
-
-      .user-info {
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-        color: var(--link-color);
+      nav a[disabled], nav button[disabled] {
+        opacity: 0.7;
+        cursor: not-allowed;
+        background: none !important;
+        color: var(--text-color);
       }
-
+      .custom-add-btn {
+        background: linear-gradient(90deg,#f1666d 0%,#9c0720 100%);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.51em 1.18em;
+        font-size: 1.19rem;
+        font-family: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #f1666d44;
+        transition: background 0.2s, box-shadow 0.2s;
+        margin: 0 2px;
+        min-width: 0;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .custom-add-btn:hover {
+        background: linear-gradient(90deg,#9c0720 0%,#f1666d 100%);
+        box-shadow: 0 4px 14px #9c072088;
+      }
+      section {
+        width: 93%;
+        max-width: 520px;
+        margin: 0 auto;
+        background: var(--form-bg);
+        border: 1.2px solid var(--form-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 30px var(--form-shadow);
+        padding: 2.1rem 1.5rem 1.4rem 1.5rem;
+        backdrop-filter: blur(13px);
+        position: relative;
+        z-index: 1;
+        font-size: 0.97rem;
+      }
+      h1 {
+        font-size: 2.1rem;
+        font-family: 'Montserrat', 'Arial', sans-serif;
+        font-weight: 800;
+        margin-bottom: 1.8rem;
+        color: var(--text-color);
+        letter-spacing: 0.025em;
+        text-shadow: 0 3px 18px #61000050;
+      }
+      .user-info {
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+        color: var(--text-color);
+      }
       #modal {
         display: none;
         position: fixed;
@@ -131,183 +293,189 @@
       #recipeForm {
         background: #fff;
         color: #222;
-        border-radius: 10px;
-        padding: 2rem;
-        box-shadow: 0 4px 15px rgba(156,7,32,0.2);
-        min-width: 320px;
+        border-radius: 15px;
+        padding: 1.1rem 1.2rem 1.4rem 1.2rem;
+        box-shadow: 0 4px 22px #9c072045;
+        min-width: 295px;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        position:relative;
-        max-width: 90vw;
-        max-height: 80vh;
+        gap: 0.7rem;
+        max-width: 95vw;
+        max-height: 88vh;
         overflow-y: auto;
+        border: 1.2px solid #f1666d;
+        font-family: 'Montserrat', 'Arial', sans-serif;
+        font-size: 0.97rem;
+        align-items: stretch;
       }
       #recipeForm label {
         text-align:left;
         font-weight: bold;
+        color: #9c0720;
+        font-size: 0.97rem;
+        margin-bottom: 0.3em;
       }
       #recipeForm input[type="text"],
       #recipeForm textarea,
       #recipeForm select {
         width: 100%;
-        border: 1px solid var(--input-border);
+        border: 1.4px solid var(--form-border);
         border-radius: 5px;
-        padding: 0.5rem;
+        padding: 0.45rem 0.7rem;
         box-sizing: border-box;
-        margin-top: 4px;
+        margin: 0.22em 0 0.35em 0;
+        font-family: inherit;
+        font-size: 0.98rem;
+        background: #f7f7f7;
+        color: #610000;
+        outline: none;
+        transition: border 0.2s;
+      }
+      #recipeForm input[type="text"]:focus,
+      #recipeForm textarea:focus,
+      #recipeForm select:focus {
+        border: 1.4px solid #9c0720;
+        background: #fff;
       }
       #recipeForm textarea {
         resize: vertical;
-        min-height: 50px;
+        min-height: 60px;
       }
       #recipeForm input[type="file"] {
         display: none;
       }
       #customImageBtn {
-        background: var(--button-bg);
+        background: linear-gradient(90deg, #f1666d 0%, #9c0720 100%);
         color: #fff;
         border: none;
-        padding: 0.6rem 1.3rem;
+        padding: 0.38rem 1rem;
         border-radius: 6px;
-        box-shadow: 0 2px 8px var(--button-shadow);
+        box-shadow: 0 2px 7px #9c07207a;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 0.97rem;
         transition: background 0.3s;
+        font-family: inherit;
+        margin-right: 0.5rem;
       }
       #customImageBtn:hover {
-        background: var(--button-hover-bg);
+        background: linear-gradient(90deg, #9c0720 0%, #f1666d 100%);
       }
       #imageFileName {
         color: #9c0720;
-        font-size: 0.99rem;
+        font-size: 0.93rem;
+        margin-left: 0.5rem;
       }
       #addIngredientBtn {
-        background: var(--button-bg);
+        background: linear-gradient(90deg, #f1666d 0%, #9c0720 100%);
         color: #fff;
         border: none;
-        padding: 0.3rem 1rem;
+        padding: 0.2rem 0.8rem;
         border-radius: 5px;
-        box-shadow: 0 2px 4px var(--button-shadow);
-        margin-top: 0.4rem;
+        box-shadow: 0 1px 3px #f1666d4a;
+        margin-top: 0.2rem;
         cursor: pointer;
-        font-size: 0.98rem;
+        font-size: 0.93rem;
         transition: background 0.3s;
+        font-family: inherit;
       }
       #addIngredientBtn:hover {
-        background: var(--button-hover-bg);
+        background: linear-gradient(90deg, #9c0720 0%, #f1666d 100%);
       }
       .removeIngredientBtn {
         background: none;
         border: none;
         color: #9c0720;
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         cursor: pointer;
         margin-left: 0.2rem;
+        font-weight: bold;
+        padding: 0 0.4em;
+        border-radius: 4px;
+        transition: background 0.18s;
+      }
+      .removeIngredientBtn:hover {
+        background: #f1666d22;
       }
       #recipeForm button[type="submit"] {
-        background: var(--button-bg);
-        color: #fff;
+        background: linear-gradient(90deg, #f1666d 0%, #9c0720 100%);
+        color:#fff;
         border:none;
-        padding:0.6rem 1.2rem;
-        border-radius:6px;
-        box-shadow:0 2px 8px var(--button-shadow);
+        padding:0.44rem 1.1rem;
+        border-radius:7px;
+        box-shadow:0 2px 8px #f1666d4a;
         cursor:pointer;
         transition: background 0.3s;
-        font-size: 1rem;
-        /* Se elimina position: sticky y relacionados */
-        margin-top: 2rem;
+        font-size: 1.01rem;
+        margin-top: 1.2rem;
+        font-family: inherit;
+        align-self: flex-end;
+      }
+      #recipeForm button[type="submit"]:hover {
+        background: linear-gradient(90deg, #9c0720 0%, #f1666d 100%);
       }
       #closeModalBtn {
         position:absolute;
         top:10px;
         right:14px;
-        font-size:1.3rem;
+        font-size:1.11rem;
         background:none;
         border:none;
         cursor:pointer;
         color: #9c0720;
         font-weight: bold;
       }
-
-      #searchInput {
-        margin: 1.5rem 0 1rem 0;
-        padding: 0.7rem 1.1rem;
-        border-radius: 8px;
-        border: 1.5px solid var(--form-border);
-        background: #fff8fa;
-        font-size: 1.1rem;
-        box-shadow: 0 2px 8px rgba(156,7,32,0.08);
-        outline: none;
-        transition: border 0.2s, box-shadow 0.2s;
+      #ingredientsList > div {
+        margin-bottom: 0.15em;
       }
-      #searchInput:focus {
-        border: 2px solid var(--input-focus-border);
-        box-shadow: 0 2px 12px rgba(156,7,32,0.13);
-      }
-      #recipesList {
-        margin-top: 2rem;
-        text-align: left;
-        max-height: 50vh;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #f1666d #fff8fa;
-      }
-      #recipesList::-webkit-scrollbar {
-        width: 8px;
-        background: #fff8fa;
-      }
-      #recipesList::-webkit-scrollbar-thumb {
-        background: #f1666d;
-        border-radius: 4px;
-      }
-
       @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
+        from { opacity: 0; transform: scale(0.98);}
+        to { opacity: 1; transform: scale(1);}
       }
     </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const userInfo = document.getElementById("user-info");
-        const userName = localStorage.getItem("userName");
-        if (userName) {
-          userInfo.textContent = `Hola, ${userName}`;
-        } else {
-          userInfo.textContent = "Hola, Usuario";
-        }
-      });
-    </script>
   </head>
   <body>
     <div class="background-design"></div>
+    <!-- USER PROFILE DROPDOWN -->
+    <div class="user-profile-container">
+      <button class="profile-btn" id="profileBtn" type="button" tabindex="0">
+        <span class="profile-avatar" id="profileAvatar">👤</span>
+        <span id="profileName">Usuario</span>
+      </button>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <span class="profile-avatar" style="font-size:1.15em;">👤</span>
+          <span id="dropdownUserName">Usuario</span>
+        </div>
+        <hr class="dropdown-divider" />
+        <div class="dropdown-option" id="myRecipesBtn">🍲 Mis Recetas</div>
+        <div class="dropdown-option" id="logoutBtn">🔒 Cerrar sesión</div>
+        <div class="my-recipes-list" id="myRecipesList" style="display:none;">
+          <div class="my-recipes-list-title">Tus recetas:</div>
+          <div id="myRecipesItems"></div>
+        </div>
+      </div>
+    </div>
+    <!-- FIN PROFILE DROPDOWN -->
     <nav>
-      <a href="#" id="navOpenModal">Registrar Nueva Receta</a>
-      <a href="#" id="btnVegetarianas">Vegetarianas</a>
-      <a href="#" id="btnCarnivoras">Carnívoras</a>
-      <a href="#" id="btnVeganas">Veganas</a>
-      <a href="#" id="btnFavoritas">Favoritas</a>
+      <button id="navOpenModal" class="custom-add-btn">
+        + Agregar Recetas
+      </button>
+      <a href="/vegetarianas">Vegetarianas</a>
+      <a href="/carnivoras">Carnívoras</a>
+      <a href="/veganas">Veganas</a>
+      <button id="btnFavoritas" disabled style="opacity:0.7;cursor:not-allowed;">Favoritas</button>
     </nav>
     <section>
       <div class="user-info" id="user-info"></div>
       <h1>Bienvenido a la Página Principal</h1>
       <p>Selecciona una opción del menú para comenzar.</p>
-      <input type="text" id="searchInput" placeholder="Buscar recetas por título..." />
-      <div id="recipesList"></div>
     </section>
-
     <div id="modal">
       <form id="recipeForm" enctype="multipart/form-data" autocomplete="off">
         <button type="button" id="closeModalBtn" title="Cerrar">✖</button>
         <label>
           Imagen:
-          <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4em;">
             <input type="file" name="image" id="imageInput" accept="image/*" style="display:none;" required />
             <button type="button" id="customImageBtn">Seleccionar imagen</button>
             <span id="imageFileName"></span>
@@ -315,7 +483,7 @@
         </label>
         <label>
           Título:
-          <input type="text" name="title" required />
+          <input type="text" name="title" required placeholder="Ej: Lasaña de verduras" />
         </label>
         <label>
           Categoría:
@@ -328,7 +496,7 @@
         <label>
           Ingredientes:
           <div id="ingredientsList">
-            <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+            <div style="display:flex;gap:0.5rem;">
               <input type="text" name="ingredient" required placeholder="Ingrediente" style="flex:1;" />
               <button type="button" class="removeIngredientBtn" style="display:none;" title="Quitar ingrediente">–</button>
             </div>
@@ -337,14 +505,84 @@
         </label>
         <label>
           Preparación:
-          <textarea name="instructions" required></textarea>
+          <textarea name="instructions" required placeholder="Describe los pasos de la preparación aquí..."></textarea>
         </label>
         <button type="submit">Guardar</button>
       </form>
     </div>
-
     <script>
-      // Imagen estilizada
+      // USER PROFILE DROPDOWN LOGIC
+      let userName = localStorage.getItem("userName") || "Usuario";
+      let userEmail = localStorage.getItem("email") || "";
+      let userId = localStorage.getItem("userId") || "";
+      document.getElementById("profileName").textContent = userName;
+      document.getElementById("dropdownUserName").textContent = userName;
+
+      // Dropdown open/close logic
+      const profileBtn = document.getElementById("profileBtn");
+      const profileDropdown = document.getElementById("profileDropdown");
+      profileBtn.addEventListener("click", function(e) {
+        profileDropdown.classList.toggle("active");
+        if (profileDropdown.classList.contains("active")) {
+          document.getElementById("myRecipesList").style.display = "none";
+        }
+      });
+      // Close dropdown if clicking outside
+      document.addEventListener("mousedown", function(e){
+        if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)){
+          profileDropdown.classList.remove("active");
+        }
+      });
+
+      // Logout
+      document.getElementById("logoutBtn").addEventListener("click", function() {
+        localStorage.clear();
+        window.location.href = "/login";
+      });
+
+      // Mis Recetas
+      document.getElementById("myRecipesBtn").addEventListener("click", function() {
+        const listWrapper = document.getElementById("myRecipesList");
+        const items = document.getElementById("myRecipesItems");
+        if (listWrapper.style.display === "block") {
+          listWrapper.style.display = "none";
+          return;
+        }
+        // Mostrar recetas solo subidas por este usuario
+        fetch('http://localhost:4322/api/recipes')
+          .then(res => res.json())
+          .then(data => {
+            const myRecipes = Array.isArray(data)
+              ? data.filter(
+                  r => (r.userId && userId && String(r.userId) === String(userId))
+                )
+              : [];
+            if (!myRecipes.length) {
+              items.innerHTML = "<div style='color:#9c0720;opacity:0.7;'>No has subido recetas.</div>";
+            } else {
+              items.innerHTML = myRecipes
+                .map(r => {
+                  let imageSrc = "";
+                  if (r.image) {
+                    imageSrc = r.image.startsWith("http")
+                      ? r.image
+                      : `http://localhost:4322/uploads/${encodeURIComponent(r.image)}`;
+                  }
+                  return `<div class="my-recipes-item">
+                            ${imageSrc ? `<img src="${imageSrc}" alt="img">` : ""}
+                            <span>${r.title}</span>
+                          </div>`;
+                })
+                .join("");
+            }
+            listWrapper.style.display = "block";
+          });
+      });
+
+      // USER INFO GREETING
+      document.getElementById("user-info").textContent = `Hola, ${userName}`;
+
+      // MODAL Y FORMULARIO DE RECETA (igual que antes)
       document.getElementById('customImageBtn').onclick = function() {
         document.getElementById('imageInput').click();
       };
@@ -359,7 +597,6 @@
         const div = document.createElement('div');
         div.style.display = 'flex';
         div.style.gap = '0.5rem';
-        div.style.marginBottom = '0.4rem';
         div.innerHTML = `
           <input type="text" name="ingredient" required placeholder="Ingrediente" style="flex:1;" />
           <button type="button" class="removeIngredientBtn" title="Quitar ingrediente">–</button>
@@ -402,20 +639,20 @@
         const ingredients = Array.from(ingredientInputs).map(i => i.value.trim()).filter(Boolean);
         formData.delete('ingredient');
         formData.append('ingredients', ingredients.join('\n'));
+        if(userId) formData.append('userId', userId);
         try {
           const token = localStorage.getItem('token');
           const res = await fetch('http://localhost:4322/api/recipes', {
             method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + token
-            },
+            headers: token && token.trim() !== "" && token !== "null" && token !== "undefined"
+              ? { 'Authorization': 'Bearer ' + token }
+              : {},
             body: formData
           });
           if (res.ok) {
             alert('Receta registrada exitosamente');
             form.reset();
             modal.classList.remove('active');
-            fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), window.activeCategory || "");
             document.getElementById('imageFileName').textContent = '';
             while (ingredientsList.children.length > 1) ingredientsList.removeChild(ingredientsList.lastChild);
             updateRemoveButtons();
@@ -427,95 +664,6 @@
           alert('Error de red');
         }
       });
-
-      // Variable global para recetas
-      let allRecipes = [];
-
-      // Modifica fetchAndRenderRecipes para guardar todas las recetas en allRecipes
-      async function fetchAndRenderRecipes(filter = "", category = "") {
-        try {
-          const res = await fetch('/api/recipes');
-          const data = await res.json();
-          allRecipes = Array.isArray(data) ? data : [];
-          let recipes = allRecipes;
-
-          if (category) {
-            recipes = recipes.filter(r =>
-              r.category && r.category.trim().toLowerCase() === category.trim().toLowerCase()
-            );
-          }
-
-          if (filter) {
-            recipes = recipes.filter(r =>
-              r.title && r.title.toLowerCase().includes(filter.toLowerCase())
-            );
-          }
-
-          renderRecipes(recipes);
-        } catch (err) {
-          renderRecipes([]);
-        }
-      }
-
-      function renderRecipes(recipes) {
-        const list = document.getElementById("recipesList");
-        if (!recipes.length) {
-          list.innerHTML = "<p>No se encontraron recetas.</p>";
-          return;
-        }
-        list.innerHTML = recipes.map(recipe => `
-          <div style="background:rgba(255,255,255,0.85);color:#222;border-radius:9px;box-shadow:0 2px 8px rgba(156,7,32,0.09);padding:1rem;margin-bottom:1.2rem;text-align:left;">
-            ${recipe.image ? `<img src="/uploads/${recipe.image}" alt="${recipe.title}" style="max-width:120px;border-radius:8px;float:right;margin-left:1rem;margin-bottom:1rem;">` : ""}
-            <h3 style="margin:0 0 0.5rem 0;">${recipe.title}</h3>
-            <span style="font-size:0.95rem;background:#9c0720;color:#fff;padding:2px 8px;border-radius:4px;">${recipe.category || "Sin Categoría"}</span>
-            <p style="margin-top:0.5rem;"><b>Ingredientes:</b><br> ${recipe.ingredients ? recipe.ingredients.replace(/\n/g, '<br>') : ""}</p>
-            <p><b>Preparación:</b> ${recipe.instructions}</p>
-            <div style="clear:both;"></div>
-          </div>
-        `).join("");
-      }
-
-      // Buscar mientras se escribe
-      document.getElementById("searchInput").addEventListener("input", (e) => {
-        if (window.activeCategory) {
-          const filtered = allRecipes
-            .filter(r => r.category && r.category.trim().toLowerCase() === window.activeCategory)
-            .filter(r => r.title && r.title.toLowerCase().includes(e.target.value.trim().toLowerCase()));
-          renderRecipes(filtered);
-        } else {
-          fetchAndRenderRecipes(e.target.value.trim());
-        }
-      });
-
-      // Al cargar, trae todas las recetas (sin filtro)
-      fetchAndRenderRecipes();
-
-      // Manejo de botones de categoría
-      window.activeCategory = ""; // para saber si hay una categoría activa
-
-      document.getElementById("btnVegetarianas").addEventListener("click", function(e) {
-        e.preventDefault();
-        window.activeCategory = "vegetariana";
-        fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), "vegetariana");
-      });
-      document.getElementById("btnCarnivoras").addEventListener("click", function(e) {
-        e.preventDefault();
-        window.activeCategory = "carnivora";
-        fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), "carnivora");
-      });
-      document.getElementById("btnVeganas").addEventListener("click", function(e) {
-        e.preventDefault();
-        window.activeCategory = "vegana";
-        fetchAndRenderRecipes(document.getElementById("searchInput").value.trim(), "vegana");
-      });
-      document.getElementById("btnFavoritas").addEventListener("click", function(e) {
-        e.preventDefault();
-        window.activeCategory = "favoritas";
-        // Si tienes una propiedad especial para favoritas, cámbiala aquí.
-        const filtered = allRecipes.filter(r => r.category && r.category.trim().toLowerCase() === "favoritas");
-        renderRecipes(filtered);
-      });
-
     </script>
   </body>
 </html>

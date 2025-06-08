@@ -1,0 +1,285 @@
+---
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recetas Vegetarianas</title>
+    <style>
+      :root {
+        --rojo-dark: #610000;
+        --rojo-main: #9c0720;
+        --rojo-claro: #f1666d;
+        --bg-color: linear-gradient(135deg, var(--rojo-dark), var(--rojo-main), var(--rojo-claro));
+        --text-color: #ffffff;
+        --form-bg: rgba(255, 255, 255, 0.2);
+        --form-border: rgba(255, 255, 255, 0.3);
+        --form-shadow: rgba(0, 0, 0, 0.4);
+      }
+      body {
+        margin: 0;
+        font-family: 'Montserrat', 'Arial', sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        min-height: 100vh;
+        text-align: center;
+        position: relative;
+        letter-spacing: 0.01em;
+      }
+      .background-design {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: var(--bg-color);
+        clip-path: polygon(
+          25% 0%,
+          100% 0%,
+          75% 50%,
+          100% 100%,
+          25% 100%,
+          0% 50%
+        );
+        z-index: 0;
+        opacity: 0.92;
+        filter: blur(1px);
+      }
+      nav {
+        background: var(--form-bg);
+        border: 1px solid var(--form-border);
+        border-radius: 18px;
+        box-shadow: 0 4px 22px var(--form-shadow);
+        padding: 1rem;
+        width: 90%;
+        max-width: 700px;
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        margin: 2.5rem auto 2rem auto;
+        position: relative;
+        z-index: 2;
+      }
+      nav a, nav button {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 1.25rem;
+        transition: color 0.3s, background 0.3s, box-shadow 0.3s;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0.4em 1.1em;
+        border-radius: 8px;
+      }
+      nav a:hover, nav button:hover {
+        color: #fff;
+        background: linear-gradient(90deg,#f1666d 30%,#9c0720 100%);
+        box-shadow: 0 2px 12px #f1666dbf;
+      }
+      section {
+        width: 93%;
+        max-width: 650px;
+        margin: 0 auto;
+        background: var(--form-bg);
+        border: 1.2px solid var(--form-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 30px var(--form-shadow);
+        padding: 2.4rem 1.7rem 2rem 1.7rem;
+        backdrop-filter: blur(13px);
+        position: relative;
+        z-index: 1;
+      }
+      h1 {
+        font-size: 2.35rem;
+        font-family: 'Montserrat', 'Arial', sans-serif;
+        font-weight: 800;
+        margin-bottom: 2.2rem;
+        color: var(--text-color);
+        letter-spacing: 0.025em;
+        text-shadow: 0 3px 18px #61000050;
+      }
+      #recipesList {
+        margin-top: 1.1rem;
+        text-align: left;
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 0;
+      }
+      .recipe-title-btn {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: none;
+        color: var(--text-color);
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.25rem;
+        padding: 0.4em 1.1em;
+        margin-bottom: 0.7rem;
+        cursor: pointer;
+        transition: color 0.3s, background 0.3s, box-shadow 0.3s, transform 0.13s;
+        position: relative;
+        outline: none;
+      }
+      .recipe-title-btn .icon-veg {
+        font-size: 1.25em;
+        margin-right: 0.6em;
+        filter: drop-shadow(0 0 2px #fff7);
+      }
+      .recipe-title-btn:hover,
+      .recipe-title-btn.open {
+        color: #fff;
+        background: linear-gradient(90deg,#f1666d 30%,#9c0720 100%);
+        box-shadow: 0 2px 12px #f1666dbf;
+        transform: translateY(-2px) scale(1.03);
+      }
+      .recipe-title-btn.open::before {
+        content: "▼";
+        position: absolute;
+        right: 1.2rem;
+        color: #fff;
+        font-size: 1.1rem;
+        transition: transform 0.2s;
+      }
+      .recipe-title-btn:not(.open)::before {
+        content: "►";
+        position: absolute;
+        right: 1.2rem;
+        color: #fff;
+        font-size: 1.1rem;
+      }
+      .recipe-details {
+        background: linear-gradient(120deg,#fff,#fff7,#f1666d15);
+        color: #222;
+        border-radius: 12px;
+        box-shadow: 0 2px 18px #9c072045, 0 0px 2px #fff;
+        padding: 1.1rem 1.2rem 1.2rem 1.2rem;
+        margin-bottom: 1.3rem;
+        margin-top: -0.4rem;
+        position: relative;
+        animation: fadeIn 0.33s;
+        border: 2px solid #f1666d;
+      }
+      .recipe-details img {
+        max-width:120px;
+        border-radius:8px;
+        float:right;
+        margin-left:1rem;
+        margin-bottom:1rem;
+        box-shadow: 0 2px 8px #9c072045;
+      }
+      .category-badge {
+        font-size:0.99rem;
+        background:linear-gradient(90deg,#9c0720,#f1666d 90%);
+        color:#fff;
+        padding:2px 13px;
+        border-radius:7px;
+        font-weight: bold;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.7rem;
+        display:inline-block;
+      }
+      .close-detail-btn {
+        margin-top:22px;
+        background:linear-gradient(90deg,#f1666d 0%,#9c0720 100%);
+        color:#fff;
+        padding:0.48rem 1.15rem;
+        border-radius:7px;
+        border:none;
+        cursor:pointer;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px #f1666d7a;
+        font-weight: 600;
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      .close-detail-btn:hover {
+        background: linear-gradient(90deg,#9c0720 0%,#f1666d 100%);
+        box-shadow: 0 4px 14px #9c072088;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.98);}
+        to { opacity: 1; transform: scale(1);}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-design"></div>
+    <nav>
+      <a href="/home">Inicio</a>
+      <a href="/vegetarianas">Vegetarianas</a>
+      <a href="/carnivoras">Carnívoras</a>
+      <a href="/veganas">Veganas</a>
+      <button id="btnFavoritas" disabled style="opacity:0.7;cursor:not-allowed;">Favoritas</button>
+    </nav>
+    <section>
+      <h1>Recetas Vegetarianas</h1>
+      <div id="recipesList"></div>
+    </section>
+    <script>
+      let recetas = [];
+      let recetaAbierta = null;
+
+      function renderRecipeList() {
+        const list = document.getElementById("recipesList");
+        if (!recetas.length) {
+          list.innerHTML = "<p>No se encontraron recetas vegetarianas.</p>";
+          return;
+        }
+        list.innerHTML = recetas.map((recipe, idx) => `
+          <button class="recipe-title-btn${recetaAbierta === idx ? ' open' : ''}" onclick="mostrarDetalle(${idx})">
+            <span class="icon-veg">🥦</span>${recipe.title}
+          </button>
+          ${recetaAbierta === idx ? renderRecipeDetails(recipe) : ""}
+        `).join("");
+      }
+
+      function renderRecipeDetails(recipe) {
+        let imageSrc = "";
+        if (recipe.image) {
+          imageSrc = recipe.image.startsWith("http")
+            ? recipe.image
+            : `http://localhost:4322/uploads/${encodeURIComponent(recipe.image)}`;
+        }
+        return `
+          <div class="recipe-details">
+            ${imageSrc ? `<img src="${imageSrc}" alt="${recipe.title}">` : ""}
+            <span class="category-badge">${recipe.category || "Sin Categoría"}</span>
+            <p style="margin-top:0.7rem;"><b>Ingredientes:</b><br> ${recipe.ingredients ? recipe.ingredients.replace(/\n/g, '<br>') : ""}</p>
+            <p style="margin-top:0.7rem;"><b>Preparación:</b> ${recipe.instructions}</p>
+            <button onclick="cerrarDetalle()" type="button" class="close-detail-btn">Cerrar</button>
+            <div style="clear:both;"></div>
+          </div>
+        `;
+      }
+
+      function mostrarDetalle(idx) {
+        recetaAbierta = idx;
+        renderRecipeList();
+      }
+      function cerrarDetalle() {
+        recetaAbierta = null;
+        renderRecipeList();
+      }
+
+      // Hacemos fetch al cargar
+      fetch('http://localhost:4322/api/recipes')
+        .then(res => res.json())
+        .then(data => {
+          recetas = Array.isArray(data)
+            ? data.filter(
+                (r) =>
+                  r.category &&
+                  r.category.trim().toLowerCase() === "vegetariana"
+              )
+            : [];
+          renderRecipeList();
+        });
+
+      // Exponer funciones globalmente para el HTML inline
+      window.mostrarDetalle = mostrarDetalle;
+      window.cerrarDetalle = cerrarDetalle;
+    </script>
+  </body>
+</html>

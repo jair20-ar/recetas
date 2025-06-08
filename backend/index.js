@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path"); // <-- Agregado para servir imágenes
 const Database = require("better-sqlite3"); // Paquete para manejar SQLite
 const userRoutes = require("./routes/userRoutes"); // Importar las rutas de usuario
 const recipeRoutes = require("./routes/recipeRoutes"); // <--- ¡Agregado!
@@ -35,6 +36,9 @@ app.use((req, res, next) => {
   console.log(`Solicitud desde el origen: ${req.headers.origin}`);
   next();
 });
+
+// ---------- ¡¡ESTA LÍNEA SIRVE LA CARPETA DE IMÁGENES!! ----------
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Rutas de usuario
 app.use("/api/users", userRoutes); // Prefijo para las rutas de usuario
