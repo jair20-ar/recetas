@@ -450,12 +450,170 @@
       #ingredientsList > div {
         margin-bottom: 0.15em;
       }
+      /* ------ MODAL EDITAR RECETA NUEVO ------- */
+      #editModal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+      }
+      #editModal.active {
+        display: flex;
+        overflow-y: auto;
+        align-items: flex-start;
+      }
+      #editRecipeForm {
+        background: #fff;
+        color: #222;
+        border-radius: 15px;
+        padding: 1.1rem 1.2rem 1.4rem 1.2rem;
+        box-shadow: 0 4px 22px #9c072045;
+        min-width: 295px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        max-width: 95vw;
+        max-height: 88vh;
+        overflow-y: auto;
+        border: 1.2px solid #f1666d;
+        font-family: 'Montserrat', 'Arial', sans-serif;
+        font-size: 0.97rem;
+        align-items: stretch;
+        animation: fadeIn 0.22s;
+      }
+      #editRecipeForm label {
+        text-align:left;
+        font-weight: bold;
+        color: #9c0720;
+        font-size: 0.97rem;
+        margin-bottom: 0.3em;
+      }
+      #editRecipeForm input[type="text"],
+      #editRecipeForm textarea,
+      #editRecipeForm select {
+        width: 100%;
+        border: 1.4px solid var(--form-border);
+        border-radius: 5px;
+        padding: 0.45rem 0.7rem;
+        box-sizing: border-box;
+        margin: 0.22em 0 0.35em 0;
+        font-family: inherit;
+        font-size: 0.98rem;
+        background: #f7f7f7;
+        color: #610000;
+        outline: none;
+        transition: border 0.2s;
+      }
+      #editRecipeForm input[type="text"]:focus,
+      #editRecipeForm textarea:focus,
+      #editRecipeForm select:focus {
+        border: 1.4px solid #9c0720;
+        background: #fff;
+      }
+      #editRecipeForm textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+      #editRecipeForm input[type="file"] {
+        display: none;
+      }
+      #customEditImageBtn {
+        background: linear-gradient(90deg, #f1666d 0%, #9c0720 100%);
+        color: #fff;
+        border: none;
+        padding: 0.38rem 1rem;
+        border-radius: 6px;
+        box-shadow: 0 2px 7px #9c07207a;
+        cursor: pointer;
+        font-size: 0.97rem;
+        transition: background 0.3s;
+        font-family: inherit;
+        margin-right: 0.5rem;
+      }
+      #customEditImageBtn:hover {
+        background: linear-gradient(90deg, #9c0720 0%, #f1666d 100%);
+      }
+      #editImageFileName {
+        color: #9c0720;
+        font-size: 0.93rem;
+        margin-left: 0.5rem;
+      }
+      #editAddIngredientBtn {
+        background: linear-gradient(90deg, #f1666d 0%, #9c0720 100%);
+        color: #fff;
+        border: none;
+        padding: 0.2rem 0.8rem;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px #f1666d4a;
+        margin-top: 0.2rem;
+        cursor: pointer;
+        font-size: 0.93rem;
+        transition: background 0.3s;
+        font-family: inherit;
+      }
+      #editAddIngredientBtn:hover {
+        background: linear-gradient(90deg, #9c0720 0%, #f1666d 100%);
+      }
+      .editRemoveIngredientBtn {
+        background: none;
+        border: none;
+        color: #9c0720;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-left: 0.2rem;
+        font-weight: bold;
+        padding: 0 0.4em;
+        border-radius: 4px;
+        transition: background 0.18s;
+      }
+      .editRemoveIngredientBtn:hover {
+        background: #f1666d22;
+      }
+      #editRecipeForm button[type="submit"] {
+        background: linear-gradient(90deg, #f1666d 0%, #9c0720 100%);
+        color:#fff;
+        border:none;
+        padding:0.44rem 1.1rem;
+        border-radius:7px;
+        box-shadow:0 2px 8px #f1666d4a;
+        cursor:pointer;
+        transition: background 0.3s;
+        font-size: 1.01rem;
+        margin-top: 1.2rem;
+        font-family: inherit;
+        align-self: flex-end;
+      }
+      #editRecipeForm button[type="submit"]:hover {
+        background: linear-gradient(90deg, #9c0720 0%, #f1666d 100%);
+      }
+      #closeEditModalBtn {
+        position:absolute;
+        top:10px;
+        right:14px;
+        font-size:1.11rem;
+        background:none;
+        border:none;
+        cursor:pointer;
+        color: #9c0720;
+        font-weight: bold;
+      }
+      #editIngredientsList > div {
+        margin-bottom: 0.15em;
+      }
       @keyframes fadeIn {
         from { opacity: 0; transform: scale(0.98);}
         to { opacity: 1; transform: scale(1);}
       }
     </style>
   </head>
+
+  
   <body>
     <div class="background-design"></div>
     <!-- USER PROFILE DROPDOWN -->
@@ -533,198 +691,45 @@
         <button type="submit">Guardar</button>
       </form>
     </div>
-    <script>
-      // USER PROFILE DROPDOWN LOGIC
-      let userName = localStorage.getItem("userName") || "Usuario";
-      let userEmail = localStorage.getItem("email") || "";
-      let userId = localStorage.getItem("userId") || "";
-      document.getElementById("profileName").textContent = userName;
-      document.getElementById("dropdownUserName").textContent = userName;
 
-      // Dropdown open/close logic
-      const profileBtn = document.getElementById("profileBtn");
-      const profileDropdown = document.getElementById("profileDropdown");
-      profileBtn.addEventListener("click", function(e) {
-        profileDropdown.classList.toggle("active");
-        if (profileDropdown.classList.contains("active")) {
-          document.getElementById("myRecipesList").style.display = "none";
-        }
-      });
-      // Close dropdown if clicking outside
-      document.addEventListener("mousedown", function(e){
-        if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)){
-          profileDropdown.classList.remove("active");
-        }
-      });
+    <!-- MODAL DE EDICIÓN -->
+    <div id="editModal">
+      <form id="editRecipeForm" enctype="multipart/form-data" autocomplete="off">
+        <button type="button" id="closeEditModalBtn" title="Cerrar">✖</button>
+        <label>
+          Imagen:
+          <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4em;">
+            <input type="file" name="image" id="editImageInput" accept="image/*" style="display:none;" />
+            <button type="button" id="customEditImageBtn">Seleccionar imagen</button>
+            <span id="editImageFileName"></span>
+          </div>
+          <img id="editCurrentImage" src="" style="max-width: 100px; max-height: 60px; border-radius:5px; margin-top:0.3em;display:none;" alt="Vista previa"/>
+        </label>
+        <label>
+          Título:
+          <input type="text" name="title" id="editTitle" required placeholder="Ej: Lasaña de verduras" />
+        </label>
+        <label>
+          Categoría:
+          <select name="category" id="editCategory" required>
+            <option value="vegetariana">Vegetariana</option>
+            <option value="carnivora">Carnívora</option>
+            <option value="vegana">Vegana</option>
+          </select>
+        </label>
+        <label>
+          Ingredientes:
+          <div id="editIngredientsList"></div>
+          <button type="button" id="editAddIngredientBtn">+ Agregar ingrediente</button>
+        </label>
+        <label>
+          Preparación:
+          <textarea name="instructions" id="editInstructions" required placeholder="Describe los pasos de la preparación aquí..."></textarea>
+        </label>
+        <button type="submit">Guardar cambios</button>
+      </form>
+    </div>
 
-      // Logout
-      document.getElementById("logoutBtn").addEventListener("click", function() {
-        localStorage.clear();
-        window.location.href = "/login";
-      });
-
-      // Mis Recetas CON EDITAR Y ELIMINAR (FILTRAR POR author_id y usar token en DELETE)
-      document.getElementById("myRecipesBtn").addEventListener("click", function() {
-        const listWrapper = document.getElementById("myRecipesList");
-        const items = document.getElementById("myRecipesItems");
-        if (listWrapper.style.display === "block") {
-          listWrapper.style.display = "none";
-          return;
-        }
-        fetch('http://localhost:4322/api/recipes')
-          .then(res => res.json())
-          .then(data => {
-            // CAMBIO: FILTRO POR author_id, no userId
-            const myRecipes = Array.isArray(data)
-              ? data.filter(
-                  r => (r.author_id && userId && String(r.author_id) === String(userId))
-                )
-              : [];
-            if (!myRecipes.length) {
-              items.innerHTML = "<div style='color:#9c0720;opacity:0.7;'>No has subido recetas.</div>";
-            } else {
-              items.innerHTML = myRecipes
-                .map(r => {
-                  let imageSrc = "";
-                  if (r.image) {
-                    imageSrc = r.image.startsWith("http")
-                      ? r.image
-                      : `http://localhost:4322/uploads/${encodeURIComponent(r.image)}`;
-                  }
-                  return `<div class="my-recipes-item" data-recipe-id="${r.id || r._id}">
-                            ${imageSrc ? `<img src="${imageSrc}" alt="img">` : ""}
-                            <span style="flex:1;">${r.title}</span>
-                            <button class="editRecipeBtn" data-id="${r.id || r._id}" title="Editar">✏️</button>
-                            <button class="deleteRecipeBtn" data-id="${r.id || r._id}" title="Eliminar">🗑️</button>
-                          </div>`;
-                })
-                .join("");
-            }
-            listWrapper.style.display = "block";
-
-            // CAMBIO: Eliminar receta usando token
-            document.querySelectorAll('.deleteRecipeBtn').forEach(btn => {
-              btn.onclick = function(e) {
-                e.stopPropagation();
-                const recipeId = btn.getAttribute("data-id");
-                if (confirm("¿Seguro que deseas eliminar esta receta?")) {
-                  const token = localStorage.getItem('token');
-                  fetch(`http://localhost:4322/api/recipes/${recipeId}`, {
-                    method: "DELETE",
-                    headers: token && token.trim() !== "" && token !== "null" && token !== "undefined"
-                      ? { 'Authorization': 'Bearer ' + token }
-                      : {}
-                  })
-                  .then(res => {
-                    if(res.ok) {
-                      btn.closest('.my-recipes-item').remove();
-                    } else {
-                      res.json().then(err => {
-                        alert("No se pudo eliminar la receta: " + (err.error || ""));
-                      });
-                    }
-                  });
-                }
-              };
-            });
-
-            // Editar receta (aquí puedes abrir tu modal de edición o navegar a otra página)
-            document.querySelectorAll('.editRecipeBtn').forEach(btn => {
-              btn.onclick = function(e) {
-                e.stopPropagation();
-                const recipeId = btn.getAttribute("data-id");
-                // Aquí puedes abrir tu modal de edición, por ejemplo:
-                alert("Función de editar aún no implementada. ID Receta: " + recipeId);
-              };
-            });
-          });
-      });
-
-      // USER INFO GREETING
-      document.getElementById("user-info").textContent = `Hola, ${userName}`;
-
-      // MODAL Y FORMULARIO DE RECETA (igual que antes)
-      document.getElementById('customImageBtn').onclick = function() {
-        document.getElementById('imageInput').click();
-      };
-      document.getElementById('imageInput').onchange = function() {
-        document.getElementById('imageFileName').textContent = this.files.length ? this.files[0].name : '';
-      };
-
-      // Ingredientes dinámicos
-      const ingredientsList = document.getElementById('ingredientsList');
-      const addIngredientBtn = document.getElementById('addIngredientBtn');
-      addIngredientBtn.onclick = function() {
-        const div = document.createElement('div');
-        div.style.display = 'flex';
-        div.style.gap = '0.5rem';
-        div.innerHTML = `
-          <input type="text" name="ingredient" required placeholder="Ingrediente" style="flex:1;" />
-          <button type="button" class="removeIngredientBtn" title="Quitar ingrediente">–</button>
-        `;
-        div.querySelector('.removeIngredientBtn').onclick = function() {
-          ingredientsList.removeChild(div);
-          updateRemoveButtons();
-        };
-        ingredientsList.appendChild(div);
-        updateRemoveButtons();
-      };
-      function updateRemoveButtons() {
-        const btns = ingredientsList.querySelectorAll('.removeIngredientBtn');
-        if (btns.length > 1) {
-          btns.forEach(btn => btn.style.display = '');
-        } else {
-          btns.forEach(btn => btn.style.display = 'none');
-        }
-      }
-      updateRemoveButtons();
-
-      // Modal control
-      const modal = document.getElementById('modal');
-      const closeBtn = document.getElementById('closeModalBtn');
-      document.getElementById("navOpenModal").addEventListener("click", function(e) {
-        e.preventDefault();
-        modal.classList.add('active');
-      });
-      closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-      });
-
-      // Modifica el envío del formulario para juntar ingredientes y enviar token
-      const form = document.getElementById('recipeForm');
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const ingredientInputs = ingredientsList.querySelectorAll('input[name="ingredient"]');
-        const ingredients = Array.from(ingredientInputs).map(i => i.value.trim()).filter(Boolean);
-        formData.delete('ingredient');
-        formData.append('ingredients', ingredients.join('\n'));
-        if(userId) formData.append('userId', userId);
-        try {
-          const token = localStorage.getItem('token');
-          const res = await fetch('http://localhost:4322/api/recipes', {
-            method: 'POST',
-            headers: token && token.trim() !== "" && token !== "null" && token !== "undefined"
-              ? { 'Authorization': 'Bearer ' + token }
-              : {},
-            body: formData
-          });
-          if (res.ok) {
-            alert('Receta registrada exitosamente');
-            form.reset();
-            modal.classList.remove('active');
-            document.getElementById('imageFileName').textContent = '';
-            while (ingredientsList.children.length > 1) ingredientsList.removeChild(ingredientsList.lastChild);
-            updateRemoveButtons();
-          } else {
-            const err = await res.json();
-            alert('Error: ' + (err.error || 'al registrar la receta'));
-          }
-        } catch (err) {
-          alert('Error de red');
-        }
-      });
-    </script>
+    <script type="module" src="/scripts/home.js"></script>
   </body>
 </html>
