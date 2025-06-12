@@ -23,8 +23,11 @@ function LoginForm() {
       const data = await response.json();
       if (response.ok) {
         console.log("Inicio de sesión exitoso:", data);
-        localStorage.setItem("token", data.token); // Guarda el token en localStorage
-        navigate("/home"); // Redirige a la página 'home'
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.user.id);
+        localStorage.setItem("userName", data.user.name);
+        localStorage.setItem("email", data.user.email);
+        navigate("/home");
       } else {
         console.error("Error en el inicio de sesión:", data.error);
         setError(data.error || "Error al iniciar sesión");

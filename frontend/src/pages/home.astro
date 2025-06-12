@@ -165,6 +165,29 @@
         object-fit: cover;
         border: 1.1px solid #f1666d55;
       }
+      .my-recipes-item .editRecipeBtn, .my-recipes-item .deleteRecipeBtn {
+        background: none;
+        border: none;
+        color: #f1666d;
+        font-size: 1.1em;
+        cursor: pointer;
+        padding: 2px 7px 2px 2px;
+        border-radius: 4px;
+        transition: background 0.18s;
+        margin-left: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .my-recipes-item .deleteRecipeBtn {
+        color: #9c0720;
+        font-size: 1.13em;
+        padding: 2px 6px 2px 2px;
+      }
+      .my-recipes-item .editRecipeBtn:hover,
+      .my-recipes-item .deleteRecipeBtn:hover {
+        background: #f1666d22;
+      }
       nav {
         background: var(--form-bg);
         border: 1px solid var(--form-border);
@@ -540,7 +563,7 @@
         window.location.href = "/login";
       });
 
-      // Mis Recetas
+      // Mis Recetas CON EDITAR Y ELIMINAR (FILTRAR POR author_id y usar token en DELETE)
       document.getElementById("myRecipesBtn").addEventListener("click", function() {
         const listWrapper = document.getElementById("myRecipesList");
         const items = document.getElementById("myRecipesItems");
@@ -548,13 +571,13 @@
           listWrapper.style.display = "none";
           return;
         }
-        // Mostrar recetas solo subidas por este usuario
         fetch('http://localhost:4322/api/recipes')
           .then(res => res.json())
           .then(data => {
+            // CAMBIO: FILTRO POR author_id, no userId
             const myRecipes = Array.isArray(data)
               ? data.filter(
-                  r => (r.userId && userId && String(r.userId) === String(userId))
+                  r => (r.author_id && userId && String(r.author_id) === String(userId))
                 )
               : [];
             if (!myRecipes.length) {
@@ -568,14 +591,52 @@
                       ? r.image
                       : `http://localhost:4322/uploads/${encodeURIComponent(r.image)}`;
                   }
-                  return `<div class="my-recipes-item">
+                  return `<div class="my-recipes-item" data-recipe-id="${r.id || r._id}">
                             ${imageSrc ? `<img src="${imageSrc}" alt="img">` : ""}
-                            <span>${r.title}</span>
+                            <span style="flex:1;">${r.title}</span>
+                            <button class="editRecipeBtn" data-id="${r.id || r._id}" title="Editar">✏️</button>
+                            <button class="deleteRecipeBtn" data-id="${r.id || r._id}" title="Eliminar">🗑️</button>
                           </div>`;
                 })
                 .join("");
             }
             listWrapper.style.display = "block";
+
+            // CAMBIO: Eliminar receta usando token
+            document.querySelectorAll('.deleteRecipeBtn').forEach(btn => {
+              btn.onclick = function(e) {
+                e.stopPropagation();
+                const recipeId = btn.getAttribute("data-id");
+                if (confirm("¿Seguro que deseas eliminar esta receta?")) {
+                  const token = localStorage.getItem('token');
+                  fetch(`http://localhost:4322/api/recipes/${recipeId}`, {
+                    method: "DELETE",
+                    headers: token && token.trim() !== "" && token !== "null" && token !== "undefined"
+                      ? { 'Authorization': 'Bearer ' + token }
+                      : {}
+                  })
+                  .then(res => {
+                    if(res.ok) {
+                      btn.closest('.my-recipes-item').remove();
+                    } else {
+                      res.json().then(err => {
+                        alert("No se pudo eliminar la receta: " + (err.error || ""));
+                      });
+                    }
+                  });
+                }
+              };
+            });
+
+            // Editar receta (aquí puedes abrir tu modal de edición o navegar a otra página)
+            document.querySelectorAll('.editRecipeBtn').forEach(btn => {
+              btn.onclick = function(e) {
+                e.stopPropagation();
+                const recipeId = btn.getAttribute("data-id");
+                // Aquí puedes abrir tu modal de edición, por ejemplo:
+                alert("Función de editar aún no implementada. ID Receta: " + recipeId);
+              };
+            });
           });
       });
 

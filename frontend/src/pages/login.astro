@@ -165,7 +165,10 @@
             const data = await response.json();
 
             if (response.ok) {
-              localStorage.setItem("token", data.token);
+             localStorage.setItem("token", data.token);
+              localStorage.setItem("userId", data.user.id);
+              localStorage.setItem("userName", data.user.name);
+              localStorage.setItem("email", data.user.email);
               window.location.href = "/home";
             } else {
               errorContainer.textContent = data.error || "Error al iniciar sesión.";
