@@ -3,7 +3,7 @@ const db = require("../db"); // Asume que tienes un archivo `db.js` para manejar
 // Crear una receta
 const createRecipe = (title, description, imageUrl, userId, callback) => {
   const query = `
-    INSERT INTO recipes (title, description, image_url, user_id)
+    (INSERT INTO recipes (title, description, image_url, user_id)
     VALUES (?, ?, ?, ?)
   `;
   const values = [title, description, imageUrl, userId];

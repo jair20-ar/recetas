@@ -24,10 +24,10 @@
         margin: 0;
         font-family: 'Arial', sans-serif;
         background: var(--bg-color), url('/src/assets/img/carne2.jpg');
-        background-size:  100%; /* Ajusta el tamaño de la imagen al 70% del contenedor */
-        background-repeat: no-repeat; /* Evita que la imagen se repita */
-        background-position: center; /* Centra la imagen en el fondo */
-        background-blend-mode: overlay; /* Combina el degradado con la imagen */
+        background-size:  100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-blend-mode: overlay;
         color: var(--text-color);
         display: flex;
         justify-content: center;
@@ -68,18 +68,26 @@
         text-align: center;
         position: relative;
         z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
 
       input {
-        width: 100%;
+        width: 90%;
+        max-width: 300px;
         margin: 0.8rem 0;
         padding: 1rem;
         border: 1px solid var(--input-border);
         border-radius: 25px;
         background: var(--input-bg);
-        color: #000000; /* Texto negro para contraste */
+        color: #000000;
         font-size: 1rem;
         transition: border 0.3s, box-shadow 0.3s;
+        box-sizing: border-box;
+        display: block;
+        text-align: center; /* Centra el texto dentro del input */
       }
 
       input:focus {
@@ -98,7 +106,8 @@
         font-size: 1.2rem;
         cursor: pointer;
         transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-        width: 100%;
+        width: 90%;
+        max-width: 300px;
         box-shadow: 0 5px 15px var(--button-shadow);
       }
 
@@ -161,9 +170,8 @@
               errorContainer.textContent = "Registro exitoso. Redirigiendo...";
               errorContainer.style.color = "green";
 
-              // Redirige al usuario a la página de inicio de sesión después de 2 segundos
               setTimeout(() => {
-                window.location.href = '/login'; // Cambiar a la ruta de inicio de sesión
+                window.location.href = '/login';
               }, 2000);
             } else {
               errorContainer.textContent = data.error || "Error al registrarse.";

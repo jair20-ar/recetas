@@ -13,9 +13,9 @@
         --input-bg: #ffffff;
         --input-border: rgba(0, 0, 0, 0.2);
         --input-focus-border: rgba(32, 58, 67, 0.8);
-        --button-bg: linear-gradient(90deg, #9c0720, #610000); /* Mismos colores que el archivo de referencia */
-        --button-hover-bg: linear-gradient(90deg, #610000, #9c0720); /* Mismos colores que el archivo de referencia */
-        --button-shadow: rgba(156, 7, 32, 0.5); /* Sombra del archivo de referencia */
+        --button-bg: linear-gradient(90deg, #9c0720, #610000);
+        --button-hover-bg: linear-gradient(90deg, #610000, #9c0720);
+        --button-shadow: rgba(156, 7, 32, 0.5);
         --link-color: #ffffff;
         --link-hover-color: #f1666d;
       }
@@ -67,10 +67,15 @@
         text-align: center;
         position: relative;
         z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
 
       input {
-        width: 100%;
+        width: 90%;
+        max-width: 300px;
         margin: 0.8rem 0;
         padding: 1rem;
         border: 1px solid var(--input-border);
@@ -79,6 +84,9 @@
         color: #000000;
         font-size: 1rem;
         transition: border 0.3s, box-shadow 0.3s;
+        box-sizing: border-box;
+        display: block;
+        text-align: center; /* Centra el texto dentro del input */
       }
 
       input:focus {
@@ -97,7 +105,8 @@
         font-size: 1.2rem;
         cursor: pointer;
         transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-        width: 100%;
+        width: 90%;
+        max-width: 300px;
         box-shadow: 0 5px 15px var(--button-shadow);
       }
 
