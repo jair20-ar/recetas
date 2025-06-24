@@ -93,8 +93,8 @@ router.post("/login", async (req, res) => {
         token,
         user: {
           id: user.id,
-           name: user.name,
-            email: user.email
+          name: user.name,
+          email: user.email
         }
       });
     });
@@ -102,6 +102,56 @@ router.post("/login", async (req, res) => {
     console.error("Error interno del servidor:", err);
     res.status(500).json({ error: "Error interno del servidor." });
   }
+});
+
+// --------- FAVORITOS --------- //
+// Middleware de autenticación
+function authMiddleware(req, res, next) {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if (!token) return res.status(401).json({ error: "No token" });
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    return res.status(401).json({ error: "Token inválido" });
+  }
+}
+
+// Añadir receta a favoritos
+router.post("/:userId/favorites/:recipeId", authMiddleware, (req, res) => {
+  const { userId, recipeId } = req.params;
+  if (String(req.user.id) !== String(userId)) return res.status(403).json({ error: "No autorizado" });
+  userModel.addFavorite(userId, recipeId, (err) => {
+    if (err) return res.status(500).json({ error: "No se pudo agregar a favoritos" });
+    res.json({ message: "Receta agregada a favoritos" });
+  });
+});
+
+// Quitar de favoritos
+router.delete("/:userId/favorites/:recipeId", authMiddleware, (req, res) => {
+  const { userId, recipeId } = req.params;
+  if (String(req.user.id) !== String(userId)) return res.status(403).json({ error: "No autorizado" });
+  userModel.removeFavorite(userId, recipeId, (err) => {
+    if (err) return res.status(500).json({ error: "No se pudo eliminar de favoritos" });
+    res.json({ message: "Receta eliminada de favoritos" });
+  });
+});
+
+// Obtener recetas favoritas (devuelve los datos completos de las recetas)
+router.get("/:userId/favorites", authMiddleware, (req, res) => {
+  const { userId } = req.params;
+  if (String(req.user.id) !== String(userId)) return res.status(403).json({ error: "No autorizado" });
+  userModel.getFavorites(userId, (err, favIds) => {
+    if (err) return res.status(500).json({ error: "No se pudo obtener favoritos" });
+    if (!favIds.length) return res.json([]);
+    // Busca las recetas por ID
+    const placeholders = favIds.map(() => '?').join(',');
+    const db = require("../models/database");
+    db.all(`SELECT * FROM recipes WHERE id IN (${placeholders})`, favIds, (err, rows) => {
+      if (err) return res.status(500).json({ error: "No se pudieron obtener recetas favoritas" });
+      res.json(rows);
+    });
+  });
 });
 
 module.exports = router;

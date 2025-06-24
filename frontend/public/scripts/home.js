@@ -12,27 +12,111 @@ const dropdown = document.getElementById("dropdownSugerencias");
 const btnBuscar = document.getElementById("btnBuscarReceta");
 const resultado = document.getElementById("resultadoReceta");
 
+// ====== FAVORITOS: FUNCIONES UTILITARIAS ======
+function getUserFavoritesLocal() {
+  try {
+    return JSON.parse(localStorage.getItem("favorites") || "[]");
+  } catch { return []; }
+}
+
+function setUserFavoritesLocal(favs) {
+  localStorage.setItem("favorites", JSON.stringify(favs));
+}
+
+function isFavorite(recipeId) {
+  const favs = getUserFavoritesLocal();
+  return favs.includes(String(recipeId));
+}
+
+function toggleFavorite(recipeId, recetaObj) {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  if (!token || !userId) return alert("Debes iniciar sesión para manejar favoritos.");
+  const fav = isFavorite(recipeId);
+  const method = fav ? "DELETE" : "POST";
+  fetch(`http://localhost:4322/api/users/${userId}/favorites/${recipeId}`, {
+    method,
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.json()).then(() => {
+    let favs = getUserFavoritesLocal();
+    if (fav) {
+      favs = favs.filter(id => id !== String(recipeId));
+    } else {
+      favs.push(String(recipeId));
+    }
+    setUserFavoritesLocal(favs);
+    // Si estamos en la vista de favoritas y quitamos, recargamos solo favoritas
+    if (window.mostrandoFavoritas) {
+      mostrarFavoritas();
+    } else {
+      // Solo refresca ese recuadro
+      mostrarRecetas([recetaObj]);
+    }
+  });
+}
+
+// ========== FIN UTILIDADES FAVORITOS ============
+
+// ---------- CATEGORÍAS Y BOTONES ----------
+function setupCategoryButtons() {
+  document.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const categoria = btn.getAttribute('data-cat');
+      // recetasBuscar debe estar cargado antes, si no, espera y reintenta.
+      if (!window.recetasBuscar || !recetasBuscar.length) {
+        setTimeout(() => btn.click(), 400);
+        return;
+      }
+      const recetasFiltradas = recetasBuscar.filter(
+        r => (r.category || '').toLowerCase() === categoria.toLowerCase()
+      );
+      mostrarRecetas(recetasFiltradas);
+      window.mostrandoFavoritas = false;
+    });
+  });
+}
+
+// Llama esta función tras cargar recetasBuscar
 async function cargarRecetasParaBuscador() {
   try {
     const res = await fetch("http://localhost:4322/api/recipes");
     recetasBuscar = await res.json();
+    setupCategoryButtons(); // <-- Aquí lo llamas después de cargar!
   } catch (e) {
     recetasBuscar = [];
   }
 }
 cargarRecetasParaBuscador();
 
+// Habilita el botón de favoritas si existe sesión
+document.addEventListener("DOMContentLoaded", function() {
+  if (localStorage.getItem("token")) {
+    const favBtn = document.getElementById("btnFavoritas");
+    if (favBtn) {
+      favBtn.disabled = false;
+      favBtn.style.opacity = "1";
+      favBtn.style.cursor = "pointer";
+    }
+  }
+});
+
+// ====== MODIFICADO: mostrarRecetas con botón favoritos ======
 function mostrarRecetas(recetas) {
   if (!recetas || recetas.length === 0) {
     resultado.innerHTML = `<div style="color: #b30000; margin: 1em;">No se encontró ninguna receta.</div>`;
     return;
   }
-  resultado.innerHTML = recetas.map(receta => `
+  resultado.innerHTML = recetas.map(receta => {
+    const fav = isFavorite(receta.id || receta._id);
+    return `
     <div class="recipe-details" style="background: #fff; color: #610000; border-radius: 18px; box-shadow: 0 6px 24px #9c072045; padding:2em 1em; margin:1.5em auto; max-width:440px;">
       <div style="display:flex; flex-direction:column; align-items:center;">
         ${receta.image ? `<img src="${receta.image}" alt="${receta.title}" style="max-width:220px;max-height:150px;border-radius:15px;margin-bottom:1em; box-shadow: 0 4px 18px #9c072055;">` : ""}
         <h2 style="margin:0 0 0.6em 0;">${receta.title}</h2>
         <span style="background:#f1666d22;color:#9c0720;padding:0.3em 1.2em;border-radius:6px;font-size:1em;margin-bottom:1em;">${receta.category || "Sin categoría"}</span>
+        <button class="fav-btn" data-id="${receta.id || receta._id}" style="font-size:1.6em; background:none; border:none; cursor:pointer;" title="${fav ? "Quitar de favoritos" : "Agregar a favoritos"}">
+          ${fav ? "❤️" : "🤍"}
+        </button>
         <div style="text-align:left;width:100%;max-width:350px;">
           <b>Ingredientes:</b><br>
           <span>${receta.ingredients ? receta.ingredients.replace(/\n/g, "<br>") : "No hay ingredientes."}</span><br><br>
@@ -41,7 +125,16 @@ function mostrarRecetas(recetas) {
         </div>
       </div>
     </div>
-  `).join("");
+    `;
+  }).join("");
+  // Botones favoritos
+  document.querySelectorAll(".fav-btn").forEach(btn => {
+    btn.onclick = function() {
+      const recipeId = btn.getAttribute("data-id");
+      const receta = recetas.find(r => String(r.id || r._id) === recipeId);
+      toggleFavorite(recipeId, receta);
+    };
+  });
 }
 
 // Dropdown filtrado
@@ -100,6 +193,34 @@ btnBuscar.addEventListener("click", function() {
 });
 // =================== FIN BLOQUE BUSCADOR DE RECETAS ===================
 
+// ========= FAVORITOS: BOTÓN DE MENÚ Y FUNCIÓN PARA MOSTRAR FAVORITAS =========
+
+const btnFavoritas = document.getElementById("btnFavoritas");
+window.mostrandoFavoritas = false; // Controla si estamos mostrando favoritas
+
+function mostrarFavoritas() {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  if (!token || !userId) {
+    alert("Debes iniciar sesión para ver tus favoritas.");
+    return;
+  }
+  window.mostrandoFavoritas = true;
+  fetch(`http://localhost:4322/api/users/${userId}/favorites`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => res.json()).then(data => {
+    mostrarRecetas(data);
+  });
+}
+btnFavoritas.addEventListener("click", mostrarFavoritas);
+
+// Cuando entras a otras vistas, desactiva el flag
+document.getElementById("myRecipesBtn").addEventListener("click", function() {
+  window.mostrandoFavoritas = false;
+});
+
+// =================== RESTO DEL ARCHIVO IGUAL ===================
+
 // Dropdown open/close logic
 const profileBtn = document.getElementById("profileBtn");
 const profileDropdown = document.getElementById("profileDropdown");
@@ -109,7 +230,6 @@ profileBtn.addEventListener("click", function(e) {
     document.getElementById("myRecipesList").style.display = "none";
   }
 });
-// Close dropdown if clicking outside
 document.addEventListener("mousedown", function(e){
   if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)){
     profileDropdown.classList.remove("active");
@@ -256,6 +376,7 @@ editForm.addEventListener('submit', async (e) => {
 
 // Mis Recetas CON EDITAR Y ELIMINAR (FILTRAR POR author_id y usar token en DELETE)
 document.getElementById("myRecipesBtn").addEventListener("click", function() {
+  window.mostrandoFavoritas = false; // <--- Resetea flag de favoritas
   const listWrapper = document.getElementById("myRecipesList");
   const items = document.getElementById("myRecipesItems");
   if (listWrapper.style.display === "block") {
