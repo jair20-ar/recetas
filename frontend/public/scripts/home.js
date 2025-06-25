@@ -88,18 +88,6 @@ async function cargarRecetasParaBuscador() {
 }
 cargarRecetasParaBuscador();
 
-// Habilita el botón de favoritas si existe sesión
-document.addEventListener("DOMContentLoaded", function() {
-  if (localStorage.getItem("token")) {
-    const favBtn = document.getElementById("btnFavoritas");
-    if (favBtn) {
-      favBtn.disabled = false;
-      favBtn.style.opacity = "1";
-      favBtn.style.cursor = "pointer";
-    }
-  }
-});
-
 // ====== MODIFICADO: mostrarRecetas con botón favoritos ======
 function mostrarRecetas(recetas) {
   if (!recetas || recetas.length === 0) {
@@ -192,32 +180,6 @@ btnBuscar.addEventListener("click", function() {
   mostrarRecetas(recetas);
 });
 // =================== FIN BLOQUE BUSCADOR DE RECETAS ===================
-
-// ========= FAVORITOS: BOTÓN DE MENÚ Y FUNCIÓN PARA MOSTRAR FAVORITAS =========
-
-const btnFavoritas = document.getElementById("btnFavoritas");
-window.mostrandoFavoritas = false; // Controla si estamos mostrando favoritas
-
-function mostrarFavoritas() {
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-  if (!token || !userId) {
-    alert("Debes iniciar sesión para ver tus favoritas.");
-    return;
-  }
-  window.mostrandoFavoritas = true;
-  fetch(`http://localhost:4322/api/users/${userId}/favorites`, {
-    headers: { Authorization: `Bearer ${token}` }
-  }).then(res => res.json()).then(data => {
-    mostrarRecetas(data);
-  });
-}
-btnFavoritas.addEventListener("click", mostrarFavoritas);
-
-// Cuando entras a otras vistas, desactiva el flag
-document.getElementById("myRecipesBtn").addEventListener("click", function() {
-  window.mostrandoFavoritas = false;
-});
 
 // =================== RESTO DEL ARCHIVO IGUAL ===================
 
