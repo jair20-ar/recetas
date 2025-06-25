@@ -1,4 +1,24 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Sincronizar favoritos del backend al cargar la página
+async function syncFavoritesFromBackend() {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  if (!token || !userId) return;
+  try {
+    const res = await fetch(`http://localhost:4322/api/users/${userId}/favorites`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("No se pudo obtener favoritos");
+    const recetas = await res.json();
+    const favIds = recetas.map(r => String(r.id));
+    localStorage.setItem("favorites", JSON.stringify(favIds));
+  } catch (e) {
+    localStorage.setItem("favorites", "[]");
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await syncFavoritesFromBackend();
+
   let recetas = [];
   let recetaAbierta = null;
 
