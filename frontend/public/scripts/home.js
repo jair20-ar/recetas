@@ -1,3 +1,21 @@
+// SINCRONIZAR FAVORITOS CON BACKEND
+async function syncFavoritesFromBackend() {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  if (!token || !userId) return;
+  try {
+    const res = await fetch(`http://localhost:4322/api/users/${userId}/favorites`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("No se pudo obtener favoritos");
+    const recetas = await res.json();
+    const favIds = recetas.map(r => String(r.id));
+    localStorage.setItem("favorites", JSON.stringify(favIds));
+  } catch (e) {
+    localStorage.setItem("favorites", "[]");
+  }
+}
+
 // USER PROFILE DROPDOWN LOGIC
 let userName = localStorage.getItem("userName") || "Usuario";
 let userEmail = localStorage.getItem("email") || "";
@@ -86,7 +104,12 @@ async function cargarRecetasParaBuscador() {
     recetasBuscar = [];
   }
 }
-cargarRecetasParaBuscador();
+
+// ================== SINCRONIZACIÓN FAVORITOS ==================
+document.addEventListener("DOMContentLoaded", async function() {
+  await syncFavoritesFromBackend();
+  cargarRecetasParaBuscador();
+});
 
 // ====== MODIFICADO: mostrarRecetas con botón favoritos ======
 function mostrarRecetas(recetas) {
