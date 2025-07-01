@@ -1,0 +1,179 @@
+:root {
+  --rojo-dark: #610000;
+  --rojo-main: #9c0720;
+  --rojo-claro: #f1666d;
+  --admin-bg: linear-gradient(135deg, var(--rojo-dark), var(--rojo-main), var(--rojo-claro));
+  --admin-text: #ffffff;
+  --admin-form-bg: rgba(255, 255, 255, 0.20);
+  --admin-form-border: rgba(255, 255, 255, 0.28);
+  --admin-shadow: rgba(156, 7, 32, 0.15);
+  --admin-card-bg: linear-gradient(120deg, #fff 90%, #ffe2f1 100%);
+  --admin-title: #9c0720;
+}
+
+body {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.01em;
+}
+
+.admin-panel {
+  max-width: 720px;
+  margin: 2.5em auto;
+  background: var(--admin-form-bg);
+  border-radius: 14px;
+  box-shadow: 0 6px 28px var(--admin-shadow);
+  padding: 2.4em 2em 2em 2em;
+  border: 1.5px solid var(--admin-form-border);
+  backdrop-filter: blur(13px);
+}
+
+h1 {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: var(--admin-text);
+  margin-bottom: 1.2em;
+  text-align: center;
+  font-family: 'Montserrat', 'Arial', sans-serif;
+  letter-spacing: 0.025em;
+  text-shadow: 0 3px 18px #61000050;
+}
+
+h2 {
+  font-size: 1.3em;
+  color: var(--admin-title);
+  margin-bottom: 1em;
+  border-bottom: 1px solid #f0b2b2;
+  padding-bottom: 0.3em;
+  font-family: 'Montserrat', 'Arial', sans-serif;
+}
+
+section {
+  margin-bottom: 2.5em;
+  width: 93%;
+  max-width: 650px;
+  background: var(--admin-form-bg);
+  border: 1.2px solid var(--admin-form-border);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px var(--admin-shadow);
+  padding: 2.4rem 1.7rem 2rem 1.7rem;
+  backdrop-filter: blur(13px);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
+}
+
+form#addCategoryForm {
+  display: flex;
+  gap: 0.6em;
+  margin-bottom: 1.5em;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.5em 0.8em;
+  font-size: 1em;
+  border: 1.5px solid #e5bcbc;
+  border-radius: 5px;
+  background: #f9f5f5cc;
+  color: var(--rojo-dark);
+  transition: border 0.2s;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+input[type="text"]:focus {
+  border: 1.5px solid var(--admin-title);
+  outline: none;
+  background: #fff;
+}
+
+button, .delete-btn {
+  background: linear-gradient(90deg,var(--rojo-claro) 0%,var(--rojo-main) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.38em 1.2em;
+  font-size: 1em;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px #9c072033;
+}
+button:hover, .delete-btn:hover {
+  background: linear-gradient(90deg,var(--rojo-main) 0%,var(--rojo-claro) 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px #9c072099;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.7em;
+  background: var(--admin-card-bg);
+  border-radius: 8px;
+  padding: 0.56em 0.7em;
+  box-shadow: 0 2px 7px #d5b2b218;
+  color: var(--rojo-dark);
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 1.09em;
+}
+
+li span {
+  flex: 1;
+  font-size: 1.10em;
+  color: var(--rojo-main);
+  font-weight: 600;
+}
+
+.delete-btn {
+  margin-left: 1em;
+  background: linear-gradient(90deg,#f5b6b6 0%,#f1666d 100%);
+  color: #b90000;
+  border: none;
+  border-radius: 8px;
+  padding: 0.28em 1em;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 1px 5px #f1666d44;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+.delete-btn:hover {
+  background: linear-gradient(90deg,#d20000 0%,#f1666d 100%);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .admin-panel {
+    padding: 1em 0.3em 2em 0.3em;
+  }
+  h1 {
+    font-size: 1.3em;
+  }
+  h2 {
+    font-size: 1em;
+  }
+  form#addCategoryForm {
+    flex-direction: column;
+    gap: 0.2em;
+  }
+  li {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.6em 0.5em;
+  }
+  .delete-btn {
+    margin-left: 0;
+    margin-top: 0.4em;
+  }
+}

@@ -1,0 +1,30 @@
+---
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Panel de Administración</title>
+    <link rel="stylesheet" href="/styles/admin.css" />
+  </head>
+  <body>
+    <main class="admin-panel">
+      <h1>Panel de administración</h1>
+
+      <section>
+        <h2>Categorías</h2>
+        <form id="addCategoryForm" autocomplete="off">
+          <input type="text" id="newCategoryName" placeholder="Agrega la nueva categoría" required />
+          <button type="submit">Agregar</button>
+        </form>
+        <ul id="categoryList"></ul>
+      </section>
+
+      <section>
+        <h2>Recetas (todas)</h2>
+        <ul id="recipeList"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="/scripts/admin.js"></script>
+  </body>
+</html>
